@@ -577,22 +577,23 @@
         let retryCount = 0;
         
         // DOM Elements
-        const elements = {
-            loading: document.getElementById('loading'),
-            recommendationsContainer: document.getElementById('recommendations-container'),
-            tableBody: document.getElementById('table-body'),
-            errorContainer: document.getElementById('error-container'),
-            refreshBtn: document.getElementById('refresh-btn'),
-            autoRefreshBtn: document.getElementById('auto-refresh-btn'),
-            totalItems: document.getElementById('total-items'),
-            criticalItems: document.getElementById('critical-items'),
-            totalRecommended: document.getElementById('total-recommended'),
-            lastUpdate: document.getElementById('last-update'),
-            updateTimestamp: document.getElementById('update-timestamp'),
-            dataTimestamp: document.getElementById('data-timestamp'),
-            systemStatus: document.getElementById('system-status'),
-            statusText: document.getElementById('status-text')
-        };
+const elements = {
+    loading: document.getElementById('loading'),
+    recommendationsContainer: document.getElementById('recommendations-container'),
+    tableBody: document.getElementById('table-body'),
+    errorContainer: document.getElementById('error-container'),
+    refreshBtn: document.getElementById('refresh-btn'),
+    autoRefreshBtn: document.getElementById('auto-refresh-btn'),
+    totalItems: document.getElementById('total-items'),
+    criticalItems: document.getElementById('critical-items'),
+    criticalItemsCard: document.getElementById('critical-items-card'), // ← ADD THIS LINE
+    totalRecommended: document.getElementById('total-recommended'),
+    lastUpdate: document.getElementById('last-update'),
+    updateTimestamp: document.getElementById('update-timestamp'),
+    dataTimestamp: document.getElementById('data-timestamp'),
+    systemStatus: document.getElementById('system-status'),
+    statusText: document.getElementById('status-text')
+};
         
         // ======================
         // CORE FUNCTIONS
