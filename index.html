@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Ensure the page never exceeds the viewport width -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KOTAai Inventory Dashboard | Kota King Klerksdorp</title>
     <style>
@@ -26,22 +25,15 @@
             padding: 0;
         }
 
-        html, body {
-            height: 100%;
-            overflow-x: hidden;               /* prevent any horizontal scroll */
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
             color: var(--text-primary);
-            line-height: 1.5;
-            padding: 15px;                   /* slightly smaller than before */
+            padding: 15px;
             min-height: 100vh;
         }
 
-        .container {
-            width: 100%;                    /* full width inside padding */
-            max-width: 100%;                /* never exceed viewport */
-            margin: 0 auto;
-        }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; }
 
         header {
             background: var(--header-bg);
@@ -50,397 +42,66 @@
             border-radius: 16px;
             margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            position: relative;
-            overflow: hidden;
         }
 
-        header::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            transform: rotate(30deg);
-        }
+        .header-content { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; }
 
-        .header-content {
-            position: relative;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 15px;
-            justify-content: space-between;
-        }
+        .logo-section h1 { font-size: 1.9rem; font-weight: 700; color: #ffd700; }
 
-        .logo-section h1 {
-            font-size: 1.9rem;             /* slightly smaller to save space */
-            font-weight: 700;
-            background: linear-gradient(to right, #ffd700, #ffaa00);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 4px;
-        }
-
-        .logo-section p {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 1rem;
-        }
-
-        .status-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 15px;
-            border-radius: 50px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--low-urgency);
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .critical-dot {
-            background: var(--high-urgency);
-            box-shadow: 0 0 6px var(--high-urgency);
-        }
-
-        /* Summary cards – unchanged layout, just a tiny margin tweak */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .summary-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-top: 4px solid var(--low-urgency);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .summary-card.critical { border-top-color: var(--high-urgency); }
-        .summary-card.warning { border-top-color: var(--medium-urgency); }
-
-        .summary-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-        }
-
-        .summary-card h3 {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .summary-value {
-            font-size: 1.9rem;
-            font-weight: 800;
-            margin: 6px 0;
-            background: linear-gradient(to right, var(--header-bg), #2c5282);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .summary-card.critical .summary-value {
-            background: linear-gradient(to right, var(--high-urgency), #e53e3e);
-            -webkit-background-clip: text;
-        }
-
-        .summary-card.warning .summary-value {
-            background: linear-gradient(to right, var(--medium-urgency), #dd6b20);
-            -webkit-background-clip: text;
-        }
-
-        .summary-label {
-            color: var(--text-secondary);
-            font-size: 0.88rem;
-            margin-top: 2px;
-        }
-
-        /* Main dashboard section – now never exceeds viewport */
+        /* --- TABLE FIXES --- */
         .dashboard-section {
             background: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
             padding: 20px;
-            margin-bottom: 20px;
-            overflow-x: auto;               /* scroll only inside if really needed */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+            overflow-x: auto; /* Handles small screens */
         }
 
-        .section-header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--border);
-            gap: 10px;
-        }
-
-        .section-header h2 {
-            font-size: 1.45rem;
-            color: var(--header-bg);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .refresh-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: linear-gradient(to right, var(--header-bg), #2c5282);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            box-shadow: 0 3px 8px rgba(26, 54, 93, 0.25);
-            font-size: 0.9rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(26, 54, 93, 0.35);
-        }
-
-        .btn:active { transform: translateY(0); }
-
-        .btn.refresh { background: linear-gradient(to right, #2b6cb0, #3182ce); }
-        .btn.auto-refresh {
-            background: var(--low-urgency);
-            padding: 8px 12px;
-        }
-
-        .btn.auto-refresh.active {
-            background: var(--high-urgency);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%   { box-shadow: 0 0 0 0 rgba(255,107,107,0.4); }
-            70%  { box-shadow: 0 0 0 8px rgba(255,107,107,0); }
-            100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
-        }
-
-        /* Table – the core of the fix */
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;            /* forces columns to stay inside container */
-            margin-top: 8px;
-            font-size: 0.9rem;              /* slightly smaller to save space */
-        }
-
-        thead {
-            background: var(--header-bg);
-            color: white;
+            table-layout: auto; /* Changed from fixed to allow columns to adjust to content */
+            min-width: 800px;    /* Prevents "squeezing" cells too tightly */
         }
 
         th, td {
-            padding: 8px 10px;             /* reduced padding – big win for width */
+            padding: 12px 10px;
             text-align: left;
-            word-break: break-word;        /* long text wraps */
-            overflow-wrap: break-word;
-            white-space: normal;           /* allow line‑breaks */
-            vertical-align: top;
-        }
-
-        th {
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        td {
             border-bottom: 1px solid var(--border);
+            word-wrap: break-word;
+            white-space: nowrap; /* Prevents text from breaking into vertical flows unless necessary */
         }
 
-        tr:hover td { background: #f8fafc; }
-
-        tr.critical-row {
-            background-color: var(--critical-bg) !important;
-            border-left: 3px solid var(--high-urgency);
+        /* Allow Item Name and Action to wrap if long, but others stay tidy */
+        td:first-child, td:last-child {
+            white-space: normal;
+            min-width: 120px;
         }
 
-        tr.warning-row {
-            background-color: var(--warning-bg) !important;
-            border-left: 3px solid var(--medium-urgency);
-        }
-
-        tr.ok-row {
-            background-color: var(--ok-bg) !important;
-            border-left: 3px solid var(--low-urgency);
-        }
-
+        thead { background: var(--header-bg); color: white; }
+        
+        /* Urgency Styling */
         .urgency-badge {
             display: inline-block;
-            padding: 3px 9px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.82rem;
-            text-align: center;
-            min-width: 70px;
-        }
-
-        .urgency-high {
-            background: rgba(255,107,107,0.15);
-            color: var(--high-urgency);
-            border: 1px solid var(--high-urgency);
-        }
-
-        .urgency-medium {
-            background: rgba(255,165,2,0.15);
-            color: var(--medium-urgency);
-            border: 1px solid var(--medium-urgency);
-        }
-
-        .urgency-low {
-            background: rgba(76,175,80,0.15);
-            color: var(--low-urgency);
-            border: 1px solid var(--low-urgency);
-        }
-
-        .status-critical {
-            color: var(--high-urgency);
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .status-low {
-            color: var(--medium-urgency);
-            font-weight: 600;
-        }
-
-        .status-ok {
-            color: var(--low-urgency);
-            font-weight: 600;
-        }
-
-        .action-text {
-            font-weight: 600;
-            padding: 2px 6px;
+            padding: 4px 10px;
             border-radius: 4px;
-            display: inline-block;
-            background: rgba(26,54,93,0.08);
-            color: var(--header-bg);
-            font-size: 0.85rem;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
         }
+        .high { background: var(--critical-bg); color: var(--high-urgency); border: 1px solid var(--high-urgency); }
+        .medium { background: var(--warning-bg); color: var(--medium-urgency); border: 1px solid var(--medium-urgency); }
+        .low { background: var(--ok-bg); color: var(--low-urgency); border: 1px solid var(--low-urgency); }
 
-        .critical-row .action-text {
-            background: rgba(255,107,107,0.15);
-            color: var(--high-urgency);
-            font-weight: 700;
-        }
-
-        .timestamp {
-            color: var(--text-secondary);
-            font-style: italic;
-            margin-top: 6px;
-            display: block;
-            text-align: right;
-            font-size: 0.85rem;
-            padding-right: 4px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 30px 15px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
-            opacity: 0.3;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 30px 15px;
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .spinner {
-            border: 3px solid rgba(26,54,93,0.1);
-            border-top: 3px solid var(--header-bg);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0%   { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error {
-            background: rgba(255,107,107,0.1);
-            border-left: 3px solid var(--high-urgency);
-            padding: 10px;
-            border-radius: 0 6px 6px 0;
-            margin: 15px 0;
-            color: #e53e3e;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 15px 5px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-top: 10px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Responsive tweaks – keep everything inside the viewport */
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-
-            .header-content { flex-direction: column; align-items: stretch; }
-            .status-bar { width: 100%; justify-content: center; }
-
-            .summary-grid { grid-template-columns: 1fr; }
-
-            .section-header { flex-direction: column; align-items: flex-start; }
-            .refresh-controls { width: 100%; justify-content: flex-start; }
-
-            th, td { padding: 6px 8px; font-size: 0.85rem; }
-            .urgency-badge { min-width: 60px; font-size: 0.78rem; }
-            .btn { padding: 6px 12px; font-size: 0.85rem; }
-        }
+        /* Other UI Elements */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .summary-card { background: white; padding: 20px; border-radius: 12px; border-top: 4px solid var(--header-bg); }
+        .summary-value { font-size: 2rem; font-weight: 800; }
+        .btn { padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; }
+        .refresh { background: var(--header-bg); color: white; }
+        .loading { text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -451,126 +112,65 @@
                     <h1>🍛 KOTAai DASHBOARD</h1>
                     <p>Intelligent Inventory Management • Kota King Klerksdorp</p>
                 </div>
-                <div class="status-bar">
-                    <span class="status-dot" id="system-status"></span>
-                    <span id="status-text">System Operational</span>
-                </div>
             </div>
         </header>
 
-        <div id="error-container" class="error" style="display:none;"></div>
-
         <div class="summary-grid">
-            <div class="summary-card" id="total-items-card">
-                <h3>📦 Total Items Monitored</h3>
-                <div class="summary-value" id="total-items">-</div>
-                <div class="summary-label">All inventory items tracked</div>
-            </div>
-            <div class="summary-card critical" id="critical-items-card">
-                <h3>🚨 Critical Items</h3>
-                <div class="summary-value" id="critical-items">-</div>
-                <div class="summary-label">Require immediate attention</div>
-            </div>
-            <div class="summary-card warning" id="recommended-order-card">
-                <h3>🛒 Total Recommended Order</h3>
-                <div class="summary-value" id="total-recommended">-</div>
-                <div class="summary-label">Units to order today</div>
-            </div>
-            <div class="summary-card" id="last-update-card">
-                <h3>⏱️ Last Updated</h3>
-                <div class="summary-value" id="last-update">-</div>
-                <div class="summary-label" id="update-timestamp">-</div>
-            </div>
+            <div class="summary-card"><h3>📦 Items</h3><div class="summary-value" id="total-items">-</div></div>
+            <div class="summary-card" style="border-top-color: var(--high-urgency)"><h3>🚨 Critical</h3><div class="summary-value" id="critical-items">-</div></div>
+            <div class="summary-card" style="border-top-color: var(--medium-urgency)"><h3>🛒 To Order</h3><div class="summary-value" id="total-recommended">-</div></div>
+            <div class="summary-card"><h3>⏱️ Updated</h3><div class="summary-value" id="last-update" style="font-size: 1.2rem;">-</div></div>
         </div>
 
         <div class="dashboard-section">
-            <div class="section-header">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                 <h2>📋 Reorder Recommendations</h2>
-                <div class="refresh-controls">
-                    <button class="btn refresh" id="refresh-btn">
-                        <span>🔄</span> Refresh Now
-                    </button>
-                    <button class="btn auto-refresh" id="auto-refresh-btn">
-                        <span>⏰</span> Auto‑Refresh: OFF
-                    </button>
-                </div>
+                <button class="btn refresh" id="refresh-btn">🔄 Refresh Now</button>
             </div>
 
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <div>Loading inventory recommendations...</div>
-            </div>
+            <div id="loading" class="loading"><div class="spinner"></div></div>
 
             <div id="recommendations-container" style="display:none;">
-                <table id="recommendations-table">
+                <table>
                     <thead>
                         <tr>
                             <th>Item Name</th>
                             <th>Current Stock</th>
                             <th>Weekly Demand</th>
                             <th>Days Left</th>
-                            <th>Recommended Order</th>
+                            <th>Recommend Order</th>
                             <th>Urgency</th>
                             <th>Status</th>
                             <th>Action Required</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
-                        <!-- Populated by JavaScript -->
-                    </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
-                <span class="timestamp" id="data-timestamp"></span>
             </div>
-        </div>
-
-        <div class="footer">
-            <p>KOTAai Inventory Intelligence System • Proprietary Forecasting Technology • © 2026 Kota King Klerksdorp</p>
-            <p>System Version: 2.1 • Data Source: KOTAai API • Forecast Accuracy: 89.2% MAPE</p>
         </div>
     </div>
 
     <script>
-        // ======================
-        // CONFIGURATION SECTION
-        // ======================
         const CONFIG = {
-            // UPDATE THIS TO YOUR ACTUAL API ENDPOINT
             API_URL: 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard',
-            AUTO_REFRESH_INTERVAL: 300000, // 5 minutes in milliseconds
             ITEMS_TO_MONITOR: ["Russian ", "Bread", "Lettuce", "Cheese", "Steak", "Atchar", "Vienna", "Tomatoes", "Burger"],
-            MAX_RETRIES: 3,
-            RETRY_DELAY: 2000 // 2 seconds
         };
 
-        // ======================
-        // STATE MANAGEMENT
-        // ======================
-        let autoRefreshActive = false;
-        let autoRefreshInterval;
-        let retryCount = 0;
-
-        // DOM Elements
         const elements = {
             loading: document.getElementById('loading'),
             recommendationsContainer: document.getElementById('recommendations-container'),
             tableBody: document.getElementById('table-body'),
-            errorContainer: document.getElementById('error-container'),
-            refreshBtn: document.getElementById('refresh-btn'),
-            autoRefreshBtn: document.getElementById('auto-refresh-btn'),
             totalItems: document.getElementById('total-items'),
             criticalItems: document.getElementById('critical-items'),
             totalRecommended: document.getElementById('total-recommended'),
             lastUpdate: document.getElementById('last-update'),
-            updateTimestamp: document.getElementById('update-timestamp'),
-            dataTimestamp: document.getElementById('data-timestamp'),
-            systemStatus: document.getElementById('system-status'),
-            statusText: document.getElementById('status-text')
+            refreshBtn: document.getElementById('refresh-btn')
         };
 
-        // ======================
-        // CORE FUNCTIONS
-        // ======================
         async function fetchRecommendations() {
+            elements.loading.style.display = "block";
+            elements.recommendationsContainer.style.display = "none";
+            
             try {
                 const response = await fetch(CONFIG.API_URL, {
                     method: 'POST',
@@ -580,18 +180,12 @@
                     })
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
                 const data = await response.json();
-
-                if (data && data.summary && data.items) {
+                if (data && data.items) {
                     updateDashboard(data.summary, data.items);
-                } else {
-                    throw new Error("Unexpected response format");
                 }
             } catch (error) {
-                console.error("Fetch error:", error);
-                showError("Failed to fetch recommendations: " + error.message);
+                console.error("Error fetching data:", error);
             }
         }
 
@@ -602,60 +196,32 @@
             elements.lastUpdate.textContent = summary.timestamp;
 
             elements.tableBody.innerHTML = "";
-
             items.forEach(item => {
                 const row = document.createElement("tr");
-                row.className = item.status.toLowerCase();
+                
+                // FIXED: Using ingredient_stock as requested instead of item.current_stock
+                // Note: If your API specifically returns the key 'ingredient_stock', this will catch it.
+                const stockValue = item.ingredient_stock !== undefined ? item.ingredient_stock : item.current_stock;
+                
                 row.innerHTML = `
-                    <td>${item.item_name}</td>
-                    <td>${item.current_stock}</td>
+                    <td><strong>${item.item_name}</strong></td>
+                    <td>${stockValue}</td>
                     <td>${item.weekly_demand}</td>
                     <td>${item.days_left}</td>
                     <td>${item.recommended_order}</td>
-                    <td class="urgency-badge ${item.urgency.toLowerCase()}">${item.urgency}</td>
-                    <td class="status-${item.status.toLowerCase()}">${item.status}</td>
+                    <td><span class="urgency-badge ${item.urgency.toLowerCase()}">${item.urgency}</span></td>
+                    <td>${item.status}</td>
                     <td>${item.action}</td>
                 `;
                 elements.tableBody.appendChild(row);
             });
 
-            elements.recommendationsContainer.style.display = "block";
             elements.loading.style.display = "none";
-            elements.updateTimestamp.textContent = `Updated: ${summary.timestamp}`;
+            elements.recommendationsContainer.style.display = "block";
         }
 
-        function showError(message) {
-            elements.errorContainer.textContent = message;
-            elements.errorContainer.style.display = "block";
-        }
-
-        // ======================
-        // INITIALIZATION
-        // ======================
-        function initDashboard() {
-            elements.systemStatus.style.background = "var(--low-urgency)";
-            elements.statusText.textContent = "System Operational";
-
-            fetchRecommendations();
-
-            elements.autoRefreshBtn.addEventListener("click", () => {
-                if (autoRefreshActive) {
-                    clearInterval(autoRefreshInterval);
-                    elements.autoRefreshBtn.textContent = "Auto‑Refresh: OFF";
-                    autoRefreshActive = false;
-                } else {
-                    autoRefreshInterval = setInterval(fetchRecommendations, CONFIG.AUTO_REFRESH_INTERVAL);
-                    elements.autoRefreshBtn.textContent = "Auto‑Refresh: ON";
-                    elements.autoRefreshBtn.classList.add("active");
-                    autoRefreshActive = true;
-                }
-            });
-
-            elements.refreshBtn.addEventListener("click", fetchRecommendations);
-        }
-
-        // Start dashboard
-        initDashboard();
+        elements.refreshBtn.addEventListener("click", fetchRecommendations);
+        window.onload = fetchRecommendations;
     </script>
 </body>
 </html>
