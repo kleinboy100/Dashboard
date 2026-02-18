@@ -621,4 +621,68 @@
             elements.tableBody.innerHTML = "";
 
             // Populate table
-            items.forEach(item 
+            items.forEach(item => {
+                const row = document.createElement("tr");
+                row.className = item.status.toLowerCase();
+                row.innerHTML = `
+                    <td>${item.item_name}</td>
+                    <td>${item.current_stock}</td>
+                    <td>${item.weekly_demand}</td>
+                    <td>${item.days_left}</td>
+                    <td>${item.recommended_order}</td>
+                    <td class="urgency-badge ${item.urgency.toLowerCase()}">${item.urgency}</td>
+                    <td class="status-${item.status.toLowerCase()}">${item.status}</td>
+                    <td>${item.action}</td>
+                `;
+                elements.tableBody.appendChild(row);
+            });
+
+            // Show data
+            elements.recommendationsContainer.style.display = "block";
+            elements.loading.style.display = "none";
+
+            // Update last update timestamp
+            elements.updateTimestamp.textContent = `Updated: ${summary.timestamp}`;
+        }
+
+        function showError(message) {
+            elements.errorContainer.textContent = message;
+            elements.errorContainer.style.display = "block";
+        }
+
+        // ======================
+        // INITIALIZATION
+        // ======================
+        function initDashboard() {
+            // Set initial status
+            elements.systemStatus.style.background = "var(--low-urgency)";
+            elements.statusText.textContent = "System Operational";
+
+            // Fetch recommendations
+            fetchRecommendations();
+
+            // Set up auto-refresh
+            elements.autoRefreshBtn.addEventListener("click", () => {
+                if (autoRefreshActive) {
+                    clearInterval(autoRefreshInterval);
+                    elements.autoRefreshBtn.textContent = "Auto-Refresh: OFF";
+                    autoRefreshActive = false;
+                } else {
+                    autoRefreshInterval = setInterval(fetchRecommendations, CONFIG.AUTO_REFRESH_INTERVAL);
+                    elements.autoRefreshBtn.textContent = "Auto-Refresh: ON";
+                    elements.autoRefreshBtn.classList.add("active");
+                    autoRefreshActive = true;
+                }
+            });
+
+            // Set up manual refresh
+            elements.refreshBtn.addEventListener("click", () => {
+                fetchRecommendations();
+            });
+        }
+
+        // Start dashboard
+        initDashboard();
+    </script>
+</body>
+</html>
