@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang=”en”>
+<html lang="en">
 <head>
-    <meta charset=”UTF-8”>
-    <meta name=”viewport” content=”width=device-width, initial-scale=1.0”>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KOTAai Inventory Dashboard | Kota King Klerksdorp</title>
     <style>
         :root {
@@ -19,232 +19,232 @@
             --text-secondary: #4a5568;
         }
         
-•	{
-            Margin: 0;
-            Padding: 0;
-            Box-sizing: border-box;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        Body {
-            Font-family: ‘Segoe UI’, Tahoma, Geneva, Verdana, sans-serif;
-            Background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
-            Color: var(--text-primary);
-            Line-height: 1.6;
-            Padding: 20px;
-            Min-height: 100vh;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
         }
         
         .container {
-            Max-width: 1400px;
-            Margin: 0 auto;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
-        Header {
-            Background: var(--header-bg);
-            Color: white;
-            Padding: 1.5rem 2rem;
-            Border-radius: 16px;
-            Margin-bottom: 25px;
-            Box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            Position: relative;
-            Overflow: hidden;
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
         }
         
-        Header::before {
-            Content: “”;
-            Position: absolute;
-            Top: -50%;
-            Left: -50%;
-            Width: 200%;
-            Height: 200%;
-            Background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            Transform: rotate(30deg);
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
         }
         
         .header-content {
-            Position: relative;
-            Display: flex;
-            Justify-content: space-between;
-            Align-items: center;
-            Flex-wrap: wrap;
-            Gap: 20px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         
         .logo-section h1 {
-            Font-size: 2.2rem;
-            Font-weight: 700;
-            Background: linear-gradient(to right, #ffd700, #ffaa00);
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ffd700, #ffaa00);
             -webkit-background-clip: text;
-            Background-clip: text;
-            Color: transparent;
-            Margin-bottom: 5px;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
         }
         
         .logo-section p {
-            Color: rgba(255, 255, 255, 0.85);
-            Font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.1rem;
         }
         
         .status-bar {
-            Display: flex;
-            Align-items: center;
-            Gap: 15px;
-            Background: rgba(255, 255, 255, 0.15);
-            Padding: 8px 20px;
-            Border-radius: 50px;
-            Font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 500;
         }
         
         .status-dot {
-            Width: 12px;
-            Height: 12px;
-            Background: var(--low-urgency);
-            Border-radius: 50%;
-            Display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--low-urgency);
+            border-radius: 50%;
+            display: inline-block;
         }
         
         .critical-dot {
-            Background: var(--high-urgency);
-            Box-shadow: 0 0 8px var(--high-urgency);
+            background: var(--high-urgency);
+            box-shadow: 0 0 8px var(--high-urgency);
         }
         
         .summary-grid {
-            Display: grid;
-            Grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            Gap: 20px;
-            Margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
         
         .summary-card {
-            Background: var(--card-bg);
-            Border-radius: 16px;
-            Padding: 22px;
-            Box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-            Transition: transform 0.3s ease, box-shadow 0.3s ease;
-            Border-top: 4px solid var(--low-urgency);
-            Position: relative;
-            Overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid var(--low-urgency);
+            position: relative;
+            overflow: hidden;
         }
         
         .summary-card.critical {
-            Border-top-color: var(--high-urgency);
+            border-top-color: var(--high-urgency);
         }
         
         .summary-card.warning {
-            Border-top-color: var(--medium-urgency);
+            border-top-color: var(--medium-urgency);
         }
         
         .summary-card:hover {
-            Transform: translateY(-5px);
-            Box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
         }
         
         .summary-card h3 {
-            Font-size: 1.1rem;
-            Color: var(--text-secondary);
-            Margin-bottom: 12px;
-            Display: flex;
-            Align-items: center;
-            Gap: 8px;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .summary-card h3 I {
-            Font-size: 1.3rem;
+        .summary-card h3 i {
+            font-size: 1.3rem;
         }
         
         .summary-value {
-            Font-size: 2.2rem;
-            Font-weight: 800;
-            Margin: 8px 0;
-            Background: linear-gradient(to right, var(--header-bg), #2c5282);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 8px 0;
+            background: linear-gradient(to right, var(--header-bg), #2c5282);
             -webkit-background-clip: text;
-            Background-clip: text;
-            Color: transparent;
+            background-clip: text;
+            color: transparent;
         }
         
         .summary-card.critical .summary-value {
-            Background: linear-gradient(to right, var(--high-urgency), #e53e3e);
+            background: linear-gradient(to right, var(--high-urgency), #e53e3e);
             -webkit-background-clip: text;
         }
         
         .summary-card.warning .summary-value {
-            Background: linear-gradient(to right, var(--medium-urgency), #dd6b20);
+            background: linear-gradient(to right, var(--medium-urgency), #dd6b20);
             -webkit-background-clip: text;
         }
         
         .summary-label {
-            Color: var(--text-secondary);
-            Font-size: 0.95rem;
-            Margin-top: 4px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 4px;
         }
         
         .dashboard-section {
-            Background: var(--card-bg);
-            Border-radius: 16px;
-            Box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-            Padding: 25px;
-            Margin-bottom: 30px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 30px;
         }
         
         .section-header {
-            Display: flex;
-            Justify-content: space-between;
-            Align-items: center;
-            Margin-bottom: 20px;
-            Padding-bottom: 15px;
-            Border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
         }
         
         .section-header h2 {
-            Font-size: 1.6rem;
-            Color: var(--header-bg);
-            Display: flex;
-            Align-items: center;
-            Gap: 10px;
+            font-size: 1.6rem;
+            color: var(--header-bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .refresh-controls {
-            Display: flex;
-            Gap: 12px;
-            Align-items: center;
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
         
         .btn {
-            Background: linear-gradient(to right, var(--header-bg), #2c5282);
-            Color: white;
-            Border: none;
-            Padding: 10px 20px;
-            Border-radius: 50px;
-            Font-weight: 600;
-            Cursor: pointer;
-            Display: flex;
-            Align-items: center;
-            Gap: 8px;
-            Transition: all 0.3s ease;
-            Box-shadow: 0 4px 10px rgba(26, 54, 93, 0.3);
+            background: linear-gradient(to right, var(--header-bg), #2c5282);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(26, 54, 93, 0.3);
         }
         
         .btn:hover {
-            Transform: translateY(-2px);
-            Box-shadow: 0 6px 15px rgba(26, 54, 93, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 54, 93, 0.4);
         }
         
         .btn:active {
-            Transform: translateY(0);
+            transform: translateY(0);
         }
         
         .btn.refresh {
-            Background: linear-gradient(to right, #2b6cb0, #3182ce);
+            background: linear-gradient(to right, #2b6cb0, #3182ce);
         }
         
         .btn.auto-refresh {
-            Background: var(--low-urgency);
-            Padding: 10px 15px;
+            background: var(--low-urgency);
+            padding: 10px 15px;
         }
         
         .btn.auto-refresh.active {
-            Background: var(--high-urgency);
-            Animation: pulse 2s infinite;
+            background: var(--high-urgency);
+            animation: pulse 2s infinite;
         }
         
         @keyframes pulse {
@@ -253,143 +253,143 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
         }
         
-        Table {
-            Width: 100%;
-            Border-collapse: collapse;
-            Margin-top: 10px;
-            Box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
         
-        Th {
-            Background: var(--header-bg);
-            Color: white;
-            Text-align: left;
-            Padding: 16px 20px;
-            Font-weight: 600;
-            Position: sticky;
-            Top: 0;
+        th {
+            background: var(--header-bg);
+            color: white;
+            text-align: left;
+            padding: 16px 20px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
         }
         
-        Td {
-            Padding: 16px 20px;
-            Border-bottom: 1px solid var(--border);
-            Font-weight: 500;
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
         }
         
-        Tr:hover td {
-            Background: #f8fafc;
+        tr:hover td {
+            background: #f8fafc;
         }
         
-        Tr.critical-row {
-            Background-color: var(--critical-bg) !important;
-            Border-left: 4px solid var(--high-urgency);
+        tr.critical-row {
+            background-color: var(--critical-bg) !important;
+            border-left: 4px solid var(--high-urgency);
         }
         
-        Tr.warning-row {
-            Background-color: var(--warning-bg) !important;
-            Border-left: 4px solid var(--medium-urgency);
+        tr.warning-row {
+            background-color: var(--warning-bg) !important;
+            border-left: 4px solid var(--medium-urgency);
         }
         
-        Tr.ok-row {
-            Background-color: var(--ok-bg) !important;
-            Border-left: 4px solid var(--low-urgency);
+        tr.ok-row {
+            background-color: var(--ok-bg) !important;
+            border-left: 4px solid var(--low-urgency);
         }
         
         .urgency-badge {
-            Display: inline-block;
-            Padding: 4px 12px;
-            Border-radius: 50px;
-            Font-weight: 600;
-            Font-size: 0.85rem;
-            Text-align: center;
-            Min-width: 85px;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+            min-width: 85px;
         }
         
         .urgency-high {
-            Background: rgba(255, 107, 107, 0.15);
-            Color: var(--high-urgency);
-            Border: 1px solid var(--high-urgency);
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--high-urgency);
+            border: 1px solid var(--high-urgency);
         }
         
         .urgency-medium {
-            Background: rgba(255, 165, 2, 0.15);
-            Color: var(--medium-urgency);
-            Border: 1px solid var(--medium-urgency);
+            background: rgba(255, 165, 2, 0.15);
+            color: var(--medium-urgency);
+            border: 1px solid var(--medium-urgency);
         }
         
         .urgency-low {
-            Background: rgba(76, 175, 80, 0.15);
-            Color: var(--low-urgency);
-            Border: 1px solid var(--low-urgency);
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--low-urgency);
+            border: 1px solid var(--low-urgency);
         }
         
         .status-critical {
-            Color: var(--high-urgency);
-            Font-weight: 700;
-            Font-size: 1.05rem;
+            color: var(--high-urgency);
+            font-weight: 700;
+            font-size: 1.05rem;
         }
         
         .status-low {
-            Color: var(--medium-urgency);
-            Font-weight: 600;
+            color: var(--medium-urgency);
+            font-weight: 600;
         }
         
         .status-ok {
-            Color: var(--low-urgency);
-            Font-weight: 600;
+            color: var(--low-urgency);
+            font-weight: 600;
         }
         
         .action-text {
-            Font-weight: 600;
-            Padding: 3px 8px;
-            Border-radius: 6px;
-            Display: inline-block;
-            Background: rgba(26, 54, 93, 0.08);
-            Color: var(--header-bg);
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            background: rgba(26, 54, 93, 0.08);
+            color: var(--header-bg);
         }
         
         .critical-row .action-text {
-            Background: rgba(255, 107, 107, 0.15);
-            Color: var(--high-urgency);
-            Font-weight: 700;
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--high-urgency);
+            font-weight: 700;
         }
         
         .timestamp {
-            Color: var(--text-secondary);
-            Font-style: italic;
-            Margin-top: 8px;
-            Display: block;
-            Text-align: right;
-            Padding-right: 10px;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 8px;
+            display: block;
+            text-align: right;
+            padding-right: 10px;
         }
         
         .empty-state {
-            Text-align: center;
-            Padding: 40px 20px;
-            Color: var(--text-secondary);
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
         }
         
-        .empty-state I {
-            Font-size: 3.5rem;
-            Margin-bottom: 15px;
-            Opacity: 0.3;
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
         }
         
         .loading {
-            Text-align: center;
-            Padding: 40px;
-            Font-size: 1.2rem;
-            Color: var(--text-secondary);
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
         }
         
         .spinner {
-            Border: 4px solid rgba(26, 54, 93, 0.1);
-            Border-top: 4px solid var(--header-bg);
-            Border-radius: 50%;
-            Width: 40px;
-            Height: 40px;
-            Animation: spin 1s linear infinite;
-            Margin: 0 auto 20px;
+            border: 4px solid rgba(26, 54, 93, 0.1);
+            border-top: 4px solid var(--header-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
         
         @keyframes spin {
@@ -398,119 +398,119 @@
         }
         
         .error {
-            Background: rgba(255, 107, 107, 0.1);
-            Border-left: 4px solid var(--high-urgency);
-            Padding: 15px;
-            Border-radius: 0 8px 8px 0;
-            Margin: 20px 0;
-            Color: #e53e3e;
-            Font-weight: 500;
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 4px solid var(--high-urgency);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #e53e3e;
+            font-weight: 500;
         }
         
         .footer {
-            Text-align: center;
-            Padding: 25px;
-            Color: var(--text-secondary);
-            Font-size: 0.95rem;
-            Margin-top: 10px;
-            Border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 25px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 10px;
+            border-top: 1px solid var(--border);
         }
         
         @media (max-width: 768px) {
-            Body {
-                Padding: 15px;
+            body {
+                padding: 15px;
             }
             
             .header-content {
-                Flex-direction: column;
-                Text-align: center;
+                flex-direction: column;
+                text-align: center;
             }
             
             .status-bar {
-                Width: 100%;
-                Justify-content: center;
+                width: 100%;
+                justify-content: center;
             }
             
             .summary-grid {
-                Grid-template-columns: 1fr;
+                grid-template-columns: 1fr;
             }
             
             .refresh-controls {
-                Width: 100%;
-                Justify-content: center;
+                width: 100%;
+                justify-content: center;
             }
             
-            Th, td {
-                Padding: 12px 10px;
-                Font-size: 0.9rem;
+            th, td {
+                padding: 12px 10px;
+                font-size: 0.9rem;
             }
             
             .section-header h2 {
-                Font-size: 1.4rem;
+                font-size: 1.4rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class=”container”>
+    <div class="container">
         <header>
-            <div class=”header-content”>
-                <div class=”logo-section”>
+            <div class="header-content">
+                <div class="logo-section">
                     <h1>🍛 KOTAai DASHBOARD</h1>
                     <p>Intelligent Inventory Management • Kota King Klerksdorp</p>
                 </div>
-                <div class=”status-bar”>
-                    <span class=”status-dot” id=”system-status”></span>
-                    <span id=”status-text”>System Operational</span>
+                <div class="status-bar">
+                    <span class="status-dot" id="system-status"></span>
+                    <span id="status-text">System Operational</span>
                 </div>
             </div>
         </header>
         
-        <div id=”error-container” class=”error” style=”display:none;”></div>
+        <div id="error-container" class="error" style="display:none;"></div>
         
-        <div class=”summary-grid”>
-            <div class=”summary-card” id=”total-items-card”>
+        <div class="summary-grid">
+            <div class="summary-card" id="total-items-card">
                 <h3>📦 Total Items Monitored</h3>
-                <div class=”summary-value” id=”total-items”>-</div>
-                <div class=”summary-label”>All inventory items tracked</div>
+                <div class="summary-value" id="total-items">-</div>
+                <div class="summary-label">All inventory items tracked</div>
             </div>
-            <div class=”summary-card critical” id=”critical-items-card”>
+            <div class="summary-card critical" id="critical-items-card">
                 <h3>🚨 Critical Items</h3>
-                <div class=”summary-value” id=”critical-items”>-</div>
-                <div class=”summary-label”>Require immediate attention</div>
+                <div class="summary-value" id="critical-items">-</div>
+                <div class="summary-label">Require immediate attention</div>
             </div>
-            <div class=”summary-card warning” id=”recommended-order-card”>
+            <div class="summary-card warning" id="recommended-order-card">
                 <h3>🛒 Total Recommended Order</h3>
-                <div class=”summary-value” id=”total-recommended”>-</div>
-                <div class=”summary-label”>Units to order today</div>
+                <div class="summary-value" id="total-recommended">-</div>
+                <div class="summary-label">Units to order today</div>
             </div>
-            <div class=”summary-card” id=”last-update-card”>
+            <div class="summary-card" id="last-update-card">
                 <h3>⏱️ Last Updated</h3>
-                <div class=”summary-value” id=”last-update”>-</div>
-                <div class=”summary-label” id=”update-timestamp”>-</div>
+                <div class="summary-value" id="last-update">-</div>
+                <div class="summary-label" id="update-timestamp">-</div>
             </div>
         </div>
         
-        <div class=”dashboard-section”>
-            <div class=”section-header”>
+        <div class="dashboard-section">
+            <div class="section-header">
                 <h2>📋 Reorder Recommendations</h2>
-                <div class=”refresh-controls”>
-                    <button class=”btn refresh” id=”refresh-btn”>
+                <div class="refresh-controls">
+                    <button class="btn refresh" id="refresh-btn">
                         <span>🔄</span> Refresh Now
                     </button>
-                    <button class=”btn auto-refresh” id=”auto-refresh-btn”>
+                    <button class="btn auto-refresh" id="auto-refresh-btn">
                         <span>⏰</span> Auto-Refresh: OFF
                     </button>
                 </div>
             </div>
             
-            <div id=”loading” class=”loading”>
-                <div class=”spinner”></div>
-                <div>Loading inventory recommendations…</div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div>Loading inventory recommendations...</div>
             </div>
             
-            <div id=”recommendations-container” style=”display:none;”>
-                <table id=”recommendations-table”>
+            <div id="recommendations-container" style="display:none;">
+                <table id="recommendations-table">
                     <thead>
                         <tr>
                             <th>Item Name</th>
@@ -523,15 +523,15 @@
                             <th>Action Required</th>
                         </tr>
                     </thead>
-                    <tbody id=”table-body”>
-                        <!—Populated by JavaScript 
+                    <tbody id="table-body">
+                        <!-- Populated by JavaScript -->
                     </tbody>
                 </table>
-                <span class=”timestamp” id=”data-timestamp”></span>
+                <span class="timestamp" id="data-timestamp"></span>
             </div>
         </div>
         
-        <div class=”footer”>
+        <div class="footer">
             <p>KOTAai Inventory Intelligence System • Proprietary Forecasting Technology • © 2026 Kota King Klerksdorp</p>
             <p>System Version: 2.1 • Data Source: KOTAai API • Forecast Accuracy: 89.2% MAPE</p>
         </div>
@@ -541,11 +541,11 @@
         // ======================
         // CONFIGURATION SECTION
         // ======================
-        Const CONFIG = {
+        const CONFIG = {
             // UPDATE THIS TO YOUR ACTUAL API ENDPOINT
-            API_URL: ‘https://restaurant-demand-forecasting-1.onrender.com/api/dashboard’, // Corrected to match backend
+            API_URL: 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard', // Corrected to match backend
             AUTO_REFRESH_INTERVAL: 300000, // 5 minutes in milliseconds
-            ITEMS_TO_MONITOR: [“Bread”, “Russian”, “Vienna”, “Chips”, “Steak”, “Atchar”, “Polony”,  “eggs”, “Cheese”, “Burger”, “Cheese”],
+            ITEMS_TO_MONITOR: ["Flamwood", "Stop 5", "Stop 18", "Phelandaba", "Steak", "Toast"],
             MAX_RETRIES: 3,
             RETRY_DELAY: 2000 // 2 seconds
         };
@@ -553,56 +553,72 @@
         // ======================
         // STATE MANAGEMENT
         // ======================
-        Let autoRefreshActive = false;
-        Let autoRefreshInterval;
-        Let retryCount = 0;
+        let autoRefreshActive = false;
+        let autoRefreshInterval;
+        let retryCount = 0;
         
         // DOM Elements
-        Const elements = {
-            Loading: document.getElementById(‘loading’),
-            recommendationsContainer: document.getElementById(‘recommendations-container’),
-            tableBody: document.getElementById(‘table-body’),
-            errorContainer: document.getElementById(‘error-container’),
-            refreshBtn: document.getElementById(‘refresh-btn’),
-            autoRefreshBtn: document.getElementById(‘auto-refresh-btn’),
-            totalItems: document.getElementById(‘total-items’),
-            criticalItems: document.getElementById(‘critical-items’),
-            totalRecommended: document.getElementById(‘total-recommended’),
-            lastUpdate: document.getElementById(‘last-update’),
-            updateTimestamp: document.getElementById(‘update-timestamp’),
-            dataTimestamp: document.getElementById(‘data-timestamp’),
-            systemStatus: document.getElementById(‘system-status’),
-            statusText: document.getElementById(‘status-text’)
+        const elements = {
+            loading: document.getElementById('loading'),
+            recommendationsContainer: document.getElementById('recommendations-container'),
+            tableBody: document.getElementById('table-body'),
+            errorContainer: document.getElementById('error-container'),
+            refreshBtn: document.getElementById('refresh-btn'),
+            autoRefreshBtn: document.getElementById('auto-refresh-btn'),
+            totalItems: document.getElementById('total-items'),
+            criticalItems: document.getElementById('critical-items'),
+            totalRecommended: document.getElementById('total-recommended'),
+            lastUpdate: document.getElementById('last-update'),
+            updateTimestamp: document.getElementById('update-timestamp'),
+            dataTimestamp: document.getElementById('data-timestamp'),
+            systemStatus: document.getElementById('system-status'),
+            statusText: document.getElementById('status-text')
         };
         
         // ======================
         // CORE FUNCTIONS
         // ======================
-        Async function fetchRecommendations() {
-            Try {
-                Const response = await fetch(CONFIG.API_URL, {
-                    Method: ‘POST’,
-                    Headers: {
-                        ‘Content-Type’: ‘application/json’,
+        async function fetchRecommendations() {
+            try {
+                const response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
                         // Add API key header if required by your API:
-                        // ‘X-API-Key’: ‘your-api-key-here’
+                        // 'X-API-Key': 'your-api-key-here'
                     },
-                    Body: JSON.stringify({
-                        Items: CONFIG.ITEMS_TO_MONITOR.map(item => ({ item_name: item }))
+                    body: JSON.stringify({
+                        items: CONFIG.ITEMS_TO_MONITOR.map(item => ({ item_name: item }))
                     })
                 });
 
-                If (!response.ok) {
-                    Throw new Error(`HTTP error! Status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                Const data = await response.json();
-                Console.log(“API Response:”, data); // Debugging line
+                const data = await response.json();
+                console.log("API Response:", data); // Debugging line
 
-                If (data && data.summary && data.items) {
+                if (data && data.summary && data.items) {
                     updateDashboard(data.summary, data.items);
                 } else {
-                    Throw new Error(“Unexpected response format”);
+                    throw new Error("Unexpected response format");
                 }
             } catch (error) {
-                Console.error(“Fetch error:”, erro
+                console.error("Fetch error:", error); // Debugging line
+                showError("Failed to fetch recommendations: " + error.message);
+            }
+        }
+
+        function updateDashboard(summary, items) {
+            // Update summary cards
+            elements.totalItems.textContent = summary.total_items;
+            elements.criticalItems.textContent = summary.critical_items;
+            elements.totalRecommended.textContent = summary.total_recommended;
+            elements.lastUpdate.textContent = summary.timestamp;
+
+            // Clear table
+            elements.tableBody.innerHTML = "";
+
+            // Populate table
+            items.forEach(item 
