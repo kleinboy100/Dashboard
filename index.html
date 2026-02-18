@@ -19,11 +19,7 @@
             --text-secondary: #4a5568;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -34,10 +30,7 @@
             min-height: 100vh;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
         
         header {
             background: var(--header-bg);
@@ -78,7 +71,6 @@
         
         .status-dot { width: 8px; height: 8px; background: var(--low-urgency); border-radius: 50%; }
 
-        /* Summary Cards */
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -100,7 +92,6 @@
         .summary-card h3 { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px; }
         .summary-value { font-size: 1.4rem; font-weight: 800; color: var(--header-bg); }
 
-        /* Dashboard Section */
         .dashboard-section {
             background: var(--card-bg);
             border-radius: 12px;
@@ -128,16 +119,15 @@
             background: var(--header-bg);
         }
 
-        .btn.auto-refresh.active { background: var(--high-urgency); animation: pulse 2s infinite; }
+        .btn.auto-refresh.active { background: var(--high-urgency); }
 
-        /* RESPONSIVE TABLE LOGIC */
+        /* RESPONSIVE TABLE */
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8fafc; text-align: left; padding: 12px; font-size: 0.8rem; color: var(--text-secondary); border-bottom: 2px solid var(--border); }
         td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 
         @media (max-width: 768px) {
-            thead { display: none; } /* Hide headers on mobile */
-            
+            thead { display: none; }
             tr {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -149,18 +139,11 @@
                 background: #fff;
                 border-left: 5px solid #ccc;
             }
-
             tr.critical-row { border-left-color: var(--high-urgency); background: var(--critical-bg); }
             tr.warning-row { border-left-color: var(--medium-urgency); background: var(--warning-bg); }
             tr.ok-row { border-left-color: var(--low-urgency); background: var(--ok-bg); }
 
-            td {
-                display: flex;
-                flex-direction: column;
-                padding: 0 !important;
-                border: none;
-            }
-
+            td { display: flex; flex-direction: column; padding: 0 !important; border: none; }
             td::before {
                 content: attr(data-label);
                 font-size: 0.7rem;
@@ -169,8 +152,6 @@
                 color: var(--text-secondary);
                 margin-bottom: 2px;
             }
-
-            /* Item name spans full width */
             td:first-child {
                 grid-column: span 2;
                 font-weight: 800;
@@ -182,18 +163,12 @@
             td:first-child::before { display: none; }
         }
 
-        .urgency-badge {
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
+        .urgency-badge { padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
         .urgency-critical { background: var(--high-urgency); color: white; }
         .urgency-warning { background: var(--medium-urgency); color: white; }
         .urgency-ok { background: var(--low-urgency); color: white; }
 
         .loading, .error { text-align: center; padding: 30px; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -282,19 +257,25 @@
             elements.container.style.display = 'none';
             elements.error.style.display = 'none';
 
+            // RESTORED ORIGINAL PAYLOAD FORMAT
+            const payload = {
+                items: CONFIG.ITEMS.map(item => ({ item_name: item }))
+            };
+
             try {
                 const response = await fetch(CONFIG.API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: CONFIG.ITEMS.map(name => ({ item_name: name })) })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) throw new Error('API Error');
                 const data = await response.json();
                 render(data.recommendations);
             } catch (err) {
+                console.error(err);
                 elements.loading.style.display = 'none';
-                elements.error.innerText = "Connection failed. Check API.";
+                elements.error.innerText = "Connection failed. Please check your internet or API status.";
                 elements.error.style.display = 'block';
             }
         }
@@ -315,6 +296,7 @@
 
                 const tr = document.createElement('tr');
                 tr.className = `${urgency}-row`;
+                // Added data-label attributes for mobile cards
                 tr.innerHTML = `
                     <td data-label="Item">${item.item_name}</td>
                     <td data-label="Stock">${item.current_stock}</td>
@@ -338,13 +320,16 @@
                 clearInterval(autoRefreshInterval);
                 autoRefreshInterval = null;
                 elements.autoBtn.classList.remove('active');
+                elements.autoBtn.innerText = "⏰ Auto";
             } else {
                 autoRefreshInterval = setInterval(loadData, CONFIG.AUTO_REFRESH_INTERVAL);
                 elements.autoBtn.classList.add('active');
+                elements.autoBtn.innerText = "⏰ Live";
                 loadData();
             }
         };
 
+        // Initial Load
         loadData();
     </script>
 </body>
