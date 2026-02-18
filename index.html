@@ -25,6 +25,11 @@
             box-sizing: border-box;
         }
         
+        html, body {
+            /* Prevent any horizontal scroll from body/root */
+            overflow-x: hidden;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
@@ -32,11 +37,13 @@
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            width: 100%;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
         }
         
         header {
@@ -184,6 +191,8 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
             padding: 25px;
             margin-bottom: 30px;
+            /* Prevent the table from breaking out */
+            width: 100%;
         }
         
         .section-header {
@@ -258,6 +267,8 @@
             border-collapse: collapse;
             margin-top: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            /* Force columns to fit within available width */
+            table-layout: fixed;
         }
         
         th {
@@ -274,6 +285,8 @@
             padding: 16px 20px;
             border-bottom: 1px solid var(--border);
             font-weight: 500;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         tr:hover td {
@@ -545,7 +558,7 @@
             // UPDATE THIS TO YOUR ACTUAL API ENDPOINT
             API_URL: 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard', // Corrected to match backend
             AUTO_REFRESH_INTERVAL: 300000, // 5 minutes in milliseconds
-            ITEMS_TO_MONITOR: ["Flamwood ", "Stop 5", "Stop 18", "Toast", "Steak", "Phelandaba"],
+            ITEMS_TO_MONITOR: ["Russian ", "Bread", "Lettuce", "Cheese", "Steak", "Atchar", "Vienna", "Tomatoes", "Burger"],
             MAX_RETRIES: 3,
             RETRY_DELAY: 2000 // 2 seconds
         };
@@ -589,6 +602,28 @@
                     },
                     body: JSON.stringify({
                         items: CONFIG.ITEMS_TO_MONITOR.map(item => ({ item_name: item }))
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data); // Debugging line
+
+                if (data && data.summary && data.items) {
+                    updateDashboard(data.summary, data.items);
+                } else {
+                    throw new Error("Unexpected response format");
+                }
+            } catch (error) {
+                console.error("Fetch error:", error); // Debugging line
+                showError("Failed to fetch recommendations: " + error.message);
+            }
+        }
+
+        function updateDashboard(summary, items=> ({ item_name: item }))
                     })
                 });
 
@@ -686,3 +721,4 @@
     </script>
 </body>
 </html>
+
