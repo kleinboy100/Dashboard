@@ -1,253 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KOTAai Inventory Dashboard | Kota King Klerksdorp</title>
-    <style>
-        :root {
-            --high-urgency: #ff6b6b;
-            --medium-urgency: #ffa502;
-            --low-urgency: #4caf50;
-            --critical-bg: #fff5f5;
-            --warning-bg: #fff8e6;
-            --ok-bg: #f6fff6;
-            --border: #e2e8f0;
-            --header-bg: #1a365d;
-            --card-bg: #ffffff;
-            --text-primary: #1a202c;
-            --text-secondary: #4a5568;
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
-            color: var(--text-primary);
-            padding: 20px;
-            line-height: 1.6;
-        }
-
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; }
-
-        header {
-            background: var(--header-bg);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .summary-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-top: 5px solid var(--header-bg);
-        }
-
-        .summary-value { font-size: 2.2rem; font-weight: 800; color: var(--header-bg); }
-
-        /* --- TABLE FORMATTING FIXES --- */
-        .dashboard-section {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            overflow-x: auto; /* Ensures table doesn't break on mobile */
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 900px; /* Prevents columns from getting too narrow */
-        }
-
-        th {
-            background-color: #f8fafc;
-            color: var(--header-bg);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-            padding: 15px;
-            border-bottom: 2px solid var(--border);
-            text-align: left;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-            /* Prevents the vertical-stacking/flow issue */
-            white-space: nowrap; 
-        }
-
-        /* Allow wrap only for Item Name and Action to keep balance */
-        td.item-name, td.action-cell {
-            white-space: normal;
-            min-width: 150px;
-        }
-
-        .urgency-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: inline-block;
-        }
-
-        .urgency-high { background: var(--critical-bg); color: var(--high-urgency); border: 1px solid var(--high-urgency); }
-        .urgency-medium { background: var(--warning-bg); color: var(--medium-urgency); border: 1px solid var(--medium-urgency); }
-        .urgency-low { background: var(--ok-bg); color: var(--low-urgency); border: 1px solid var(--low-urgency); }
-
-        .btn {
-            background: var(--header-bg);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0,0,0,0.1);
-            border-top-color: var(--header-bg);
-            border-radius: 50%;
-            animation: spin 1s infinite linear;
-            margin: 20px auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOTAai Inventory Dashboard | Kota King Klerksdorp</title>
+  <style>
+    :root {
+      --high-urgency: #ff6b6b;
+      --medium-urgency: #ffa502;
+      --low-urgency: #4caf50;
+      --critical-bg: #fff5f5;
+      --warning-bg: #fff8e6;
+      --ok-bg: #f6fff6;
+      --border: #e2e8f0;
+      --header-bg: #1a365d;
+      --card-bg: #ffffff;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+    }
+    
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
+      color: var(--text-primary);
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; }
+    
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .summary-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-top: 5px solid var(--header-bg);
+    }
+    
+    .summary-value { font-size: 2.2rem; font-weight: 800; color: var(--header-bg); }
+    
+    /* --- TABLE FORMATTING FIXES --- */
+    .dashboard-section {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+    
+    th {
+      background-color: #f8fafc;
+      color: var(--header-bg);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      padding: 15px;
+      border-bottom: 2px solid var(--border);
+      text-align: left;
+    }
+    
+    td {
+      padding: 15px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      white-space: nowrap; 
+    }
+    
+    td.item-name, td.action-cell {
+      white-space: normal;
+      min-width: 150px;
+    }
+    
+    .urgency-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+    
+    .urgency-high { background: var(--critical-bg); color: var(--high-urgency); border: 1px solid var(--high-urgency); }
+    .urgency-medium { background: var(--warning-bg); color: var(--medium-urgency); border: 1px solid var(--medium-urgency); }
+    .urgency-low { background: var(--ok-bg); color: var(--low-urgency); border: 1px solid var(--low-urgency); }
+    
+    .btn {
+      background: var(--header-bg);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0,0,0,0.1);
+      border-top-color: var(--header-bg);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+      margin: 20px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🍛 KOTAai Inventory Dashboard</h1>
-            <p>Real-time Intelligence for Kota King Klerksdorp</p>
-        </header>
-
-        <div class="summary-grid">
-            <div class="summary-card">
-                <p>Items Monitored</p>
-                <div class="summary-value" id="total-items">-</div>
-            </div>
-            <div class="summary-card" style="border-top-color: var(--high-urgency);">
-                <p>Critical Low Stock</p>
-                <div class="summary-value" id="critical-items">-</div>
-            </div>
-            <div class="summary-card" style="border-top-color: var(--medium-urgency);">
-                <p>Order Volume (Units)</p>
-                <div class="summary-value" id="total-recommended">-</div>
-            </div>
-        </div>
-
-        <div class="dashboard-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>📦 Stock Reorder Recommendations</h2>
-                <button class="btn" id="refresh-btn">🔄 Refresh Data</button>
-            </div>
-
-            <div id="loading" style="display: none;"><div class="spinner"></div><p style="text-align:center">Fetching latest stock from ingredient_stock...</p></div>
-
-            <div id="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Current Stock</th>
-                            <th>Weekly Demand</th>
-                            <th>Days Left</th>
-                            <th>Order Rec.</th>
-                            <th>Urgency</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="container">
+    <header>
+      <h1>🍛 KOTAai Inventory Dashboard</h1>
+      <p>Real-time Intelligence for Kota King Klerksdorp</p>
+    </header>
+    
+    <div class="summary-grid">
+      <div class="summary-card">
+        <p>Items Monitored</p>
+        <div class="summary-value" id="total-items">-</div>
+      </div>
+      <div class="summary-card" style="border-top-color: var(--high-urgency);">
+        <p>Critical Low Stock</p>
+        <div class="summary-value" id="critical-items">-</div>
+      </div>
+      <div class="summary-card" style="border-top-color: var(--medium-urgency);">
+        <p>Order Volume (Units)</p>
+        <div class="summary-value" id="total-recommended">-</div>
+      </div>
     </div>
-
-    <script>
-        const API_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard';
-        const ITEMS = ["Russian ", "Bread", "Lettuce", "Cheese", "Steak", "Atchar", "Vienna", "Tomatoes", "Burger"];
-
-        async function updateDashboard() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('table-container').style.opacity = '0.3';
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        items: ITEMS.map(name => ({ item_name: name }))
-                    })
-                });
-
-                const data = await response.json();
-                
-                // Update Summary Stats
-                document.getElementById('total-items').textContent = data.summary.total_items;
-                document.getElementById('critical-items').textContent = data.summary.critical_items;
-                document.getElementById('total-recommended').textContent = data.summary.total_recommended;
-
-                const tbody = document.getElementById('table-body');
-                tbody.innerHTML = '';
-
-                data.items.forEach(item => {
-                    const row = document.createElement('tr');
-                    
-                    // Logic to ensure current_stock is read correctly
-                    // We use item.current_stock because the main.py sends it under that name
-                    const stock = (item.current_stock !== undefined && item.current_stock !== null) ? item.current_stock : 0;
-                    
-                    row.innerHTML = `
-                        <td class="item-name"><strong>${item.item_name}</strong></td>
-                        <td style="font-weight: bold; color: ${stock < 5 ? 'red' : 'inherit'}">${stock}</td>
-                        <td>${item.weekly_demand}</td>
-                        <td>${item.days_left} Days</td>
-                        <td>${item.recommended_order}</td>
-                        <td><span class="urgency-badge urgency-${item.urgency.toLowerCase()}">${item.urgency}</span></td>
-                        <td>${item.status}</td>
-                        <td class="action-cell"><span style="color: ${item.urgency === 'HIGH' ? 'red' : 'green'}; font-weight: 700;">${item.action}</span></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-
-            } catch (error) {
-                console.error("Dashboard error:", error);
-                alert("Failed to load inventory data. Check if API is running.");
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('table-container').style.opacity = '1';
-            }
-        }
-
-        document.getElementById('refresh-btn').addEventListener('click', updateDashboard);
-        window.onload = updateDashboard;
-    </script>
+    
+    <div class="dashboard-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>📦 Stock Reorder Recommendations</h2>
+        <button class="btn" id="refresh-btn">🔄 Refresh Data</button>
+      </div>
+      
+      <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p style="text-align:center">Fetching latest stock from ingredient_stock...</p>
+      </div>
+      
+      <div id="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Current Stock</th>
+              <th>Weekly Demand</th>
+              <th>Days Left</th>
+              <th>Order Rec.</th>
+              <th>Urgency</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard';
+    // Updated ITEMS array to exactly match the ingredient names in your database
+    const ITEMS = [
+      "Chips",
+      "Melted Cheese",
+      "Russian",
+      "lettuce",
+      "Bread",
+      "tomato",
+      "atchar",
+      "Vienna",
+      "egg",
+      "steak"
+    ];
+    
+    async function updateDashboard() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('table-container').style.opacity = '0.3';
+    
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: ITEMS.map(name => ({ item_name: name }))
+          })
+        });
+    
+        const data = await response.json();
+        
+        // Update Summary Stats
+        document.getElementById('total-items').textContent = data.summary.total_items;
+        document.getElementById('critical-items').textContent = data.summary.critical_items;
+        document.getElementById('total-recommended').textContent = data.summary.total_recommended;
+    
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = '';
+    
+        data.items.forEach(item => {
+          const row = document.createElement('tr');
+          
+          // Ensure current_stock is read correctly
+          const stock = (item.current_stock !== undefined && item.current_stock !== null) ? item.current_stock : 0;
+          
+          row.innerHTML = `
+            <td class="item-name"><strong>${item.item_name}</strong></td>
+            <td style="font-weight: bold; color: ${stock < 5 ? 'red' : 'inherit'}">${stock}</td>
+            <td>${item.weekly_demand}</td>
+            <td>${item.days_left} Days</td>
+            <td>${item.recommended_order}</td>
+            <td><span class="urgency-badge urgency-${item.urgency.toLowerCase()}">${item.urgency}</span></td>
+            <td>${item.status}</td>
+            <td class="action-cell"><span style="color: ${item.urgency === 'HIGH' ? 'red' : 'green'}; font-weight: 700;">${item.action}</span></td>
+          `;
+          tbody.appendChild(row);
+        });
+    
+      } catch (error) {
+        console.error("Dashboard error:", error);
+        alert("Failed to load inventory data. Check if API is running.");
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('table-container').style.opacity = '1';
+      }
+    }
+    
+    document.getElementById('refresh-btn').addEventListener('click', updateDashboard);
+    window.onload = updateDashboard;
+  </script>
 </body>
     </html>
