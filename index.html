@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KOTAai Inventory Dashboard | KasiConnect</title>
+  <title>KOTAai Inventory Dashboard | Kota King Klerksdorp</title>
   <style>
     :root {
       --high-urgency: #ff6b6b;
@@ -61,7 +61,6 @@
     
     .summary-value { font-size: 2.2rem; font-weight: 800; color: var(--header-bg); }
     
-    /* --- TABLE FORMATTING FIXES --- */
     .dashboard-section {
       background: white;
       border-radius: 12px;
@@ -73,7 +72,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 900px;
+      min-width: 1100px;
     }
     
     th {
@@ -135,13 +134,28 @@
       margin: 20px auto;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .usage-bar {
+      height: 8px;
+      background-color: #e2e8f0;
+      border-radius: 4px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    
+    .usage-fill {
+      height: 100%;
+      background-color: var(--high-urgency);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <h1>🍛 KOTAai Inventory Dashboard</h1>
-      <p>Real-time Intelligence for KasiConnect</p>
+      <p>Real-time Intelligence for Kota King Klerksdorp</p>
     </header>
     
     <div class="summary-grid">
@@ -157,12 +171,19 @@
         <p>Order Volume (Units)</p>
         <div class="summary-value" id="total-recommended">-</div>
       </div>
+      <div class="summary-card" style="border-top-color: var(--low-urgency);">
+        <p>Today's Usage</p>
+        <div class="summary-value" id="today-usage">-</div>
+      </div>
     </div>
     
     <div class="dashboard-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>📦 Stock Reorder Recommendations</h2>
-        <button class="btn" id="refresh-btn">🔄 Refresh Data</button>
+        <div>
+          <button class="btn" id="refresh-btn">🔄 Refresh Data</button>
+          <button class="btn" id="real-time-btn" style="margin-left: 10px;">📊 Real-time Stock</button>
+        </div>
       </div>
       
       <div id="loading" style="display: none;">
@@ -176,6 +197,7 @@
             <tr>
               <th>Item Name</th>
               <th>Current Stock</th>
+              <th>Today's Usage</th>
               <th>Weekly Demand</th>
               <th>Days Left</th>
               <th>Order Rec.</th>
@@ -187,12 +209,33 @@
           <tbody id="table-body"></tbody>
         </table>
       </div>
+      
+      <!-- Order Processing Section -->
+      <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+        <h3>🍽️ Process Meal Order</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+          <select id="meal-select">
+            <option value="">Select Meal</option>
+            <option value="Flamwood">Flamwood</option>
+            <option value="Stop 5">Stop 5</option>
+            <option value="Stop 18">Stop 18</option>
+            <option value="Phelandaba">Phelandaba</option>
+            <option value="Steak">Steak</option>
+            <option value="Toast">Toast</option>
+          </select>
+          <input type="number" id="quantity-input" placeholder="Quantity" min="1" value="1" style="width: 80px;">
+          <input type="text" id="order-id-input" placeholder="Order ID (UUID)" style="width: 200px;">
+          <button class="btn" id="process-order-btn">Process Order</button>
+        </div>
+        <div id="order-result" style="margin-top: 10px; font-weight: bold;"></div>
+      </div>
     </div>
   </div>
   
   <script>
     const API_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard';
-    // Updated ITEMS array to exactly match the ingredient names in your database
+    const REAL_TIME_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/real-time-stock';
+    const PROCESS_ORDER_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/process-meal-order';
     const ITEMS = [
       "Chips",
       "Melted Cheese",
@@ -225,6 +268,10 @@
         document.getElementById('total-items').textContent = data.summary.total_items;
         document.getElementById('critical-items').textContent = data.summary.critical_items;
         document.getElementById('total-recommended').textContent = data.summary.total_recommended;
+        
+        // Calculate today's total usage
+        const todayUsage = data.items.reduce((sum, item) => sum + (item.today_usage || 0), 0);
+        document.getElementById('today-usage').textContent = todayUsage.toFixed(1);
     
         const tbody = document.getElementById('table-body');
         tbody.innerHTML = '';
@@ -234,10 +281,20 @@
           
           // Ensure current_stock is read correctly
           const stock = (item.current_stock !== undefined && item.current_stock !== null) ? item.current_stock : 0;
+          const todayUsage = (item.today_usage !== undefined && item.today_usage !== null) ? item.today_usage : 0;
+          
+          // Calculate usage percentage for visual indicator
+          const usagePercentage = stock > 0 ? Math.min(100, (todayUsage / stock) * 100) : 0;
           
           row.innerHTML = `
             <td class="item-name"><strong>${item.item_name}</strong></td>
             <td style="font-weight: bold; color: ${stock < 5 ? 'red' : 'inherit'}">${stock}</td>
+            <td>
+              <div>${todayUsage.toFixed(2)}</div>
+              <div class="usage-bar">
+                <div class="usage-fill" style="width: ${usagePercentage}%"></div>
+              </div>
+            </td>
             <td>${item.weekly_demand}</td>
             <td>${item.days_left} Days</td>
             <td>${item.recommended_order}</td>
@@ -257,8 +314,69 @@
       }
     }
     
+    async function showRealTimeStock() {
+      try {
+        const response = await fetch(REAL_TIME_URL);
+        const data = await response.json();
+        
+        let realTimeInfo = "Real-Time Stock Status:\n\n";
+        data.stock_data.forEach(item => {
+          realTimeInfo += `${item.ingredient_name}: ${item.current_stock} ${item.unit} (Used today: ${item.today_usage} ${item.unit})\n`;
+        });
+        
+        alert(realTimeInfo);
+      } catch (error) {
+        console.error("Real-time stock error:", error);
+        alert("Failed to fetch real-time stock data.");
+      }
+    }
+    
+    async function processOrder() {
+      const meal = document.getElementById('meal-select').value;
+      const quantity = parseInt(document.getElementById('quantity-input').value);
+      const orderId = document.getElementById('order-id-input').value;
+      
+      if (!meal || !quantity || !orderId) {
+        alert('Please fill in all fields');
+        return;
+      }
+      
+      try {
+        const response = await fetch(PROCESS_ORDER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order_id: orderId,
+            meal_name: meal,
+            quantity: quantity
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          document.getElementById('order-result').innerHTML = 
+            `<span style="color: green;">✅ Order processed successfully! Total depleted: ${result.total_depleted}</span>`;
+          // Refresh dashboard after 2 seconds
+          setTimeout(updateDashboard, 2000);
+        } else {
+          document.getElementById('order-result').innerHTML = 
+            `<span style="color: red;">❌ Error: ${result.detail}</span>`;
+        }
+      } catch (error) {
+        console.error('Order processing error:', error);
+        document.getElementById('order-result').innerHTML = 
+          `<span style="color: red;">❌ Failed to process order</span>`;
+      }
+    }
+    
     document.getElementById('refresh-btn').addEventListener('click', updateDashboard);
+    document.getElementById('real-time-btn').addEventListener('click', showRealTimeStock);
+    document.getElementById('process-order-btn').addEventListener('click', processOrder);
     window.onload = updateDashboard;
+    
+    // Auto-refresh every 30 seconds
+    setInterval(updateDashboard, 30000);
   </script>
 </body>
-    </html>
+        </html>
