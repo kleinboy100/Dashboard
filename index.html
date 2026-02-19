@@ -172,36 +172,6 @@
       font-weight: 600;
       font-size: 1rem;
     }
-    
-    .error-message {
-      background: #fff5f5;
-      border: 1px solid #ff6b6b;
-      color: #ff6b6b;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    
-    .debug-info {
-      background: #f8f9fa;
-      border: 1px solid #e2e8f0;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-family: monospace;
-      font-size: 0.85rem;
-    }
-    
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-    
-    .status-online { background-color: #4caf50; }
-    .status-offline { background-color: #ff6b6b; }
   </style>
 </head>
 <body>
@@ -210,8 +180,6 @@
       <h1>🍛 KOTAai Inventory Dashboard</h1>
       <p>Real-time Intelligence for Kota King Klerksdorp</p>
     </header>
-    
-    <div id="error-container"></div>
     
     <div class="summary-grid">
       <div class="summary-card">
@@ -236,10 +204,8 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>📦 Stock Reorder Recommendations</h2>
         <div>
-          <span class="status-indicator" id="api-status"></span>
-          <span id="api-status-text">Checking...</span>
-          <button class="btn" id="refresh-btn" style="margin-left: 10px;">🔄 Refresh Data</button>
-          <button class="btn" id="process-orders-btn" style="margin-left: 10px;">📊 Process Orders</button>
+          <button class="btn" id="refresh-btn">🔄 Refresh Data</button>
+          <button class="btn" id="real-time-btn" style="margin-left: 10px;">📊 Real-time Stock</button>
         </div>
       </div>
       
@@ -295,11 +261,9 @@
   </div>
   
   <script>
-    const API_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard';
-    const REAL_TIME_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/real-time-stock';
-    const PROCESS_ORDER_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/process-meal-order';
-    const AUTO_PROCESS_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/auto-process-orders';
-    const HEALTH_URL = 'https://restaurant-demand-forecasting-1.onrender.com/health';
+    const API_URL = 'https://your-backend.onrender.com/api/dashboard'; // Replace with your actual backend URL
+    const REAL_TIME_URL = 'https://your-backend.onrender.com/api/real-time-stock';
+    const PROCESS_ORDER_URL = 'https://your-backend.onrender.com/api/process-meal-order';
     const ITEMS = [
       "Chips",
       "Melted Cheese",
@@ -313,44 +277,11 @@
       "steak"
     ];
     
-    async function checkApiHealth() {
-      try {
-        const response = await fetch(HEALTH_URL);
-        const healthData = await response.json();
-        console.log('API Health:', healthData);
-        
-        const statusIndicator = document.getElementById('api-status');
-        const statusText = document.getElementById('api-status-text');
-        
-        if (healthData.status === 'healthy' && healthData.database === 'connected') {
-          statusIndicator.className = 'status-indicator status-online';
-          statusText.textContent = 'Online';
-          return true;
-        } else {
-          statusIndicator.className = 'status-indicator status-offline';
-          statusText.textContent = 'Offline';
-          return false;
-        }
-      } catch (error) {
-        console.error('Health check failed:', error);
-        document.getElementById('api-status').className = 'status-indicator status-offline';
-        document.getElementById('api-status-text').textContent = 'Offline';
-        return false;
-      }
-    }
-    
     async function updateDashboard() {
       document.getElementById('loading').style.display = 'block';
       document.getElementById('table-container').style.opacity = '0.3';
-      document.getElementById('error-container').innerHTML = '';
-      
+    
       try {
-        // First check API health
-        const isHealthy = await checkApiHealth();
-        if (!isHealthy) {
-          throw new Error('API is not responding properly');
-        }
-        
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -358,24 +289,18 @@
             items: ITEMS.map(name => ({ item_name: name }))
           })
         });
-
+    
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.detail || `API returned status ${response.status}`);
+          throw new Error(errorData.detail || "Unknown error");
         }
-
+    
         const data = await response.json();
-        console.log('API Response:', data);
-        
-        // Validate response structure
-        if (!data.summary || !data.items) {
-          throw new Error('Invalid API response structure');
-        }
         
         // Update Summary Stats
-        document.getElementById('total-items').textContent = data.summary.total_items || '-';
-        document.getElementById('critical-items').textContent = data.summary.critical_items || '-';
-        document.getElementById('total-recommended').textContent = data.summary.total_recommended || '-';
+        document.getElementById('total-items').textContent = data.summary.total_items;
+        document.getElementById('critical-items').textContent = data.summary.critical_items;
+        document.getElementById('total-recommended').textContent = data.summary.total_recommended;
         
         // Calculate today's total usage
         const todayUsage = data.items.reduce((sum, item) => sum + (item.today_usage || 0), 0);
@@ -403,78 +328,22 @@
                 <div class="usage-fill" style="width: ${usagePercentage}%"></div>
               </div>
             </td>
-            <td>${item.weekly_demand || '-'}</td>
-            <td>${item.days_left ? item.days_left + ' Days' : '-'}</td>
-            <td>${item.recommended_order || '-'}</td>
-            <td><span class="urgency-badge urgency-${item.urgency ? item.urgency.toLowerCase() : 'unknown'}">${item.urgency || 'UNKNOWN'}</span></td>
-            <td>${item.status || '-'}</td>
-            <td class="action-cell"><span style="color: ${item.urgency === 'HIGH' ? 'red' : 'green'}; font-weight: 700;">${item.action || '-'}</span></td>
+            <td>${item.weekly_demand}</td>
+            <td>${item.days_left} Days</td>
+            <td>${item.recommended_order}</td>
+            <td><span class="urgency-badge urgency-${item.urgency.toLowerCase()}">${item.urgency}</span></td>
+            <td>${item.status}</td>
+            <td class="action-cell"><span style="color: ${item.urgency === 'HIGH' ? 'red' : 'green'}; font-weight: 700;">${item.action}</span></td>
           `;
           tbody.appendChild(row);
         });
     
       } catch (error) {
         console.error("Dashboard error:", error);
-        const errorContainer = document.getElementById('error-container');
-        errorContainer.innerHTML = `
-          <div class="error-message">
-            <strong>❌ Error: ${error.message}</strong>
-            <div style="margin-top: 10px;">
-              <button class="btn" onclick="updateDashboard()">Retry</button>
-              <button class="btn" onclick="autoProcessOrders()">Process Orders</button>
-              <button class="btn" onclick="showDebugInfo()">Show Debug Info</button>
-            </div>
-          </div>
-        `;
+        alert(`Failed to load inventory data: ${error.message}`);
       } finally {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('table-container').style.opacity = '1';
-      }
-    }
-    
-    function showDebugInfo() {
-      const debugInfo = document.createElement('div');
-      debugInfo.className = 'debug-info';
-      debugInfo.innerHTML = `
-        <strong>Debug Information:</strong><br>
-        API URL: ${API_URL}<br>
-        Items: ${JSON.stringify(ITEMS)}<br>
-        Timestamp: ${new Date().toISOString()}<br>
-        <br>
-        <strong>Browser Info:</strong><br>
-        User Agent: ${navigator.userAgent}<br>
-        Platform: ${navigator.platform}<br>
-        Language: ${navigator.language}
-      `;
-      
-      const errorContainer = document.getElementById('error-container');
-      errorContainer.appendChild(debugInfo);
-    }
-    
-    async function autoProcessOrders() {
-      try {
-        document.getElementById('order-result').innerHTML = '<span>Processing orders...</span>';
-        
-        const response = await fetch(AUTO_PROCESS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          document.getElementById('order-result').innerHTML = 
-            `<span style="color: green;">✅ Processed ${result.processed_orders} orders!</span>`;
-          // Refresh dashboard after 2 seconds
-          setTimeout(updateDashboard, 2000);
-        } else {
-          const error = await response.json();
-          document.getElementById('order-result').innerHTML = 
-            `<span style="color: red;">❌ Error: ${error.detail}</span>`;
-        }
-      } catch (error) {
-        console.error('Auto process orders error:', error);
-        document.getElementById('order-result').innerHTML = 
-          `<span style="color: red;">❌ Failed to process orders</span>`;
       }
     }
     
@@ -535,16 +404,12 @@
     }
     
     document.getElementById('refresh-btn').addEventListener('click', updateDashboard);
-    document.getElementById('process-orders-btn').addEventListener('click', autoProcessOrders);
     document.getElementById('real-time-btn').addEventListener('click', showRealTimeStock);
     document.getElementById('process-order-btn').addEventListener('click', processOrder);
     window.onload = updateDashboard;
     
     // Auto-refresh every 30 seconds
     setInterval(updateDashboard, 30000);
-    
-    // Auto-process orders every 5 minutes
-    setInterval(autoProcessOrders, 300000);
   </script>
 </body>
-</html>
+  </html>
