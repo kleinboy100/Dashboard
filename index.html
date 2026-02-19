@@ -172,6 +172,25 @@
       font-weight: 600;
       font-size: 1rem;
     }
+    
+    .error-message {
+      background: #fff5f5;
+      border: 1px solid #ff6b6b;
+      color: #ff6b6b;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .debug-info {
+      background: #f8f9fa;
+      border: 1px solid #e2e8f0;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body>
@@ -180,6 +199,8 @@
       <h1>🍛 KOTAai Inventory Dashboard</h1>
       <p>Real-time Intelligence for Kota King Klerksdorp</p>
     </header>
+    
+    <div id="error-container"></div>
     
     <div class="summary-grid">
       <div class="summary-card">
@@ -264,6 +285,7 @@
     const API_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/dashboard';
     const REAL_TIME_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/real-time-stock';
     const PROCESS_ORDER_URL = 'https://restaurant-demand-forecasting-1.onrender.com/api/process-meal-order';
+    const HEALTH_URL = 'https://restaurant-demand-forecasting-1.onrender.com/health';
     const ITEMS = [
       "Chips",
       "Melted Cheese",
@@ -277,11 +299,30 @@
       "steak"
     ];
     
+    async function checkApiHealth() {
+      try {
+        const response = await fetch(HEALTH_URL);
+        const healthData = await response.json();
+        console.log('API Health:', healthData);
+        return healthData.status === 'healthy';
+      } catch (error) {
+        console.error('Health check failed:', error);
+        return false;
+      }
+    }
+    
     async function updateDashboard() {
       document.getElementById('loading').style.display = 'block';
       document.getElementById('table-container').style.opacity = '0.3';
-    
+      document.getElementById('error-container').innerHTML = '';
+      
       try {
+        // First check API health
+        const isHealthy = await checkApiHealth();
+        if (!isHealthy) {
+          throw new Error('API is not responding properly');
+        }
+        
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -289,13 +330,24 @@
             items: ITEMS.map(name => ({ item_name: name }))
           })
         });
-    
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || `API returned status ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('API Response:', data);
+        
+        // Validate response structure
+        if (!data.summary || !data.items) {
+          throw new Error('Invalid API response structure');
+        }
         
         // Update Summary Stats
-        document.getElementById('total-items').textContent = data.summary.total_items;
-        document.getElementById('critical-items').textContent = data.summary.critical_items;
-        document.getElementById('total-recommended').textContent = data.summary.total_recommended;
+        document.getElementById('total-items').textContent = data.summary.total_items || '-';
+        document.getElementById('critical-items').textContent = data.summary.critical_items || '-';
+        document.getElementById('total-recommended').textContent = data.summary.total_recommended || '-';
         
         // Calculate today's total usage
         const todayUsage = data.items.reduce((sum, item) => sum + (item.today_usage || 0), 0);
@@ -323,23 +375,51 @@
                 <div class="usage-fill" style="width: ${usagePercentage}%"></div>
               </div>
             </td>
-            <td>${item.weekly_demand}</td>
-            <td>${item.days_left} Days</td>
-            <td>${item.recommended_order}</td>
-            <td><span class="urgency-badge urgency-${item.urgency.toLowerCase()}">${item.urgency}</span></td>
-            <td>${item.status}</td>
-            <td class="action-cell"><span style="color: ${item.urgency === 'HIGH' ? 'red' : 'green'}; font-weight: 700;">${item.action}</span></td>
+            <td>${item.weekly_demand || '-'}</td>
+            <td>${item.days_left ? item.days_left + ' Days' : '-'}</td>
+            <td>${item.recommended_order || '-'}</td>
+            <td><span class="urgency-badge urgency-${item.urgency ? item.urgency.toLowerCase() : 'unknown'}">${item.urgency || 'UNKNOWN'}</span></td>
+            <td>${item.status || '-'}</td>
+            <td class="action-cell"><span style="color: ${item.urgency === 'HIGH' ? 'red' : 'green'}; font-weight: 700;">${item.action || '-'}</span></td>
           `;
           tbody.appendChild(row);
         });
     
       } catch (error) {
         console.error("Dashboard error:", error);
-        alert("Failed to load inventory data. Check if API is running.");
+        const errorContainer = document.getElementById('error-container');
+        errorContainer.innerHTML = `
+          <div class="error-message">
+            <strong>❌ Error: ${error.message}</strong>
+            <div style="margin-top: 10px;">
+              <button class="btn" onclick="updateDashboard()">Retry</button>
+              <button class="btn" onclick="showDebugInfo()">Show Debug Info</button>
+            </div>
+          </div>
+        `;
       } finally {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('table-container').style.opacity = '1';
       }
+    }
+    
+    function showDebugInfo() {
+      const debugInfo = document.createElement('div');
+      debugInfo.className = 'debug-info';
+      debugInfo.innerHTML = `
+        <strong>Debug Information:</strong><br>
+        API URL: ${API_URL}<br>
+        Items: ${JSON.stringify(ITEMS)}<br>
+        Timestamp: ${new Date().toISOString()}<br>
+        <br>
+        <strong>Browser Info:</strong><br>
+        User Agent: ${navigator.userAgent}<br>
+        Platform: ${navigator.platform}<br>
+        Language: ${navigator.language}
+      `;
+      
+      const errorContainer = document.getElementById('error-container');
+      errorContainer.appendChild(debugInfo);
     }
     
     async function showRealTimeStock() {
@@ -407,4 +487,4 @@
     setInterval(updateDashboard, 30000);
   </script>
 </body>
-            </html>
+      </html>
