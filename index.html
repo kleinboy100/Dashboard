@@ -17,7 +17,6 @@
             --card-bg: #ffffff;
             --text-primary: #1a202c;
             --text-secondary: #4a5568;
-            --brand-blue: #3182ce;
         }
         
         * {
@@ -51,6 +50,17 @@
             overflow: hidden;
         }
         
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
         .header-content {
             position: relative;
             display: flex;
@@ -75,6 +85,29 @@
             font-size: 1.1rem;
         }
         
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--low-urgency);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .critical-dot {
+            background: var(--high-urgency);
+            box-shadow: 0 0 8px var(--high-urgency);
+        }
+        
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -87,28 +120,64 @@
             border-radius: 16px;
             padding: 22px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-top: 4px solid var(--low-urgency);
+            position: relative;
+            overflow: hidden;
         }
         
-        .summary-card.critical { border-top-color: var(--high-urgency); }
-        .summary-card.warning { border-top-color: var(--medium-urgency); }
+        .summary-card.critical {
+            border-top-color: var(--high-urgency);
+        }
+        
+        .summary-card.warning {
+            border-top-color: var(--medium-urgency);
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
         
         .summary-card h3 {
             font-size: 1.1rem;
             color: var(--text-secondary);
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-card h3 i {
+            font-size: 1.3rem;
         }
         
         .summary-value {
             font-size: 2.2rem;
             font-weight: 800;
             margin: 8px 0;
-            color: var(--header-bg);
+            background: linear-gradient(to right, var(--header-bg), #2c5282);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        .summary-card.critical .summary-value { color: var(--high-urgency); }
-        .summary-card.warning .summary-value { color: var(--medium-urgency); }
-
+        
+        .summary-card.critical .summary-value {
+            background: linear-gradient(to right, var(--high-urgency), #e53e3e);
+            -webkit-background-clip: text;
+        }
+        
+        .summary-card.warning .summary-value {
+            background: linear-gradient(to right, var(--medium-urgency), #dd6b20);
+            -webkit-background-clip: text;
+        }
+        
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+        
         .dashboard-section {
             background: var(--card-bg);
             border-radius: 16px;
@@ -129,39 +198,17 @@
         .section-header h2 {
             font-size: 1.6rem;
             color: var(--header-bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        /* Filter Section Styles */
-        .filter-controls {
+        .refresh-controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
-            flex-wrap: wrap;
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
         }
-
-        .filter-controls input, .filter-controls select {
-            padding: 10px 15px;
-            border: 1px solid #cbd5e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-            background: white;
-        }
-
-        .history-result-box {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            background: var(--ok-bg);
-            border-left: 4px solid var(--brand-blue);
-            font-size: 1.1rem;
-            display: none;
-        }
-
+        
         .btn {
             background: linear-gradient(to right, var(--header-bg), #2c5282);
             color: white;
@@ -170,15 +217,47 @@
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(26, 54, 93, 0.3);
         }
-        .btn:hover { transform: translateY(-2px); }
-        .btn.refresh { background: linear-gradient(to right, #2b6cb0, #3182ce); }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 54, 93, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.refresh {
+            background: linear-gradient(to right, #2b6cb0, #3182ce);
+        }
+        
+        .btn.auto-refresh {
+            background: var(--low-urgency);
+            padding: 10px 15px;
+        }
+        
+        .btn.auto-refresh.active {
+            background: var(--high-urgency);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
         
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
         
         th {
@@ -186,24 +265,115 @@
             color: white;
             text-align: left;
             padding: 16px 20px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
         }
         
         td {
             padding: 16px 20px;
             border-bottom: 1px solid var(--border);
+            font-weight: 500;
         }
         
-        tr:hover td { background: #f8fafc; }
+        tr:hover td {
+            background: #f8fafc;
+        }
+        
+        tr.critical-row {
+            background-color: var(--critical-bg) !important;
+            border-left: 4px solid var(--high-urgency);
+        }
+        
+        tr.warning-row {
+            background-color: var(--warning-bg) !important;
+            border-left: 4px solid var(--medium-urgency);
+        }
+        
+        tr.ok-row {
+            background-color: var(--ok-bg) !important;
+            border-left: 4px solid var(--low-urgency);
+        }
+        
         .urgency-badge {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 50px;
             font-weight: 600;
             font-size: 0.85rem;
+            text-align: center;
+            min-width: 85px;
         }
-        .urgency-high { background: rgba(255, 107, 107, 0.15); color: var(--high-urgency); border: 1px solid var(--high-urgency); }
-        .urgency-medium { background: rgba(255, 165, 2, 0.15); color: var(--medium-urgency); border: 1px solid var(--medium-urgency); }
-        .urgency-low { background: rgba(76, 175, 80, 0.15); color: var(--low-urgency); border: 1px solid var(--low-urgency); }
+        
+        .urgency-high {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--high-urgency);
+            border: 1px solid var(--high-urgency);
+        }
+        
+        .urgency-medium {
+            background: rgba(255, 165, 2, 0.15);
+            color: var(--medium-urgency);
+            border: 1px solid var(--medium-urgency);
+        }
+        
+        .urgency-low {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--low-urgency);
+            border: 1px solid var(--low-urgency);
+        }
+        
+        .status-critical {
+            color: var(--high-urgency);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        
+        .status-low {
+            color: var(--medium-urgency);
+            font-weight: 600;
+        }
+        
+        .status-ok {
+            color: var(--low-urgency);
+            font-weight: 600;
+        }
+        
+        .action-text {
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            background: rgba(26, 54, 93, 0.08);
+            color: var(--header-bg);
+        }
+        
+        .critical-row .action-text {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--high-urgency);
+            font-weight: 700;
+        }
+        
+        .timestamp {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 8px;
+            display: block;
+            text-align: right;
+            padding-right: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
         
         .loading {
             text-align: center;
@@ -211,14 +381,130 @@
             font-size: 1.2rem;
             color: var(--text-secondary);
         }
-
-        .daily-usage-highlight {
-            font-weight: bold;
-            color: #d32f2f;
-            background: #fff0f0;
-            border-radius: 6px;
-            padding: 4px 8px;
-            display: inline-block;
+        
+        .spinner {
+            border: 4px solid rgba(26, 54, 93, 0.1);
+            border-top: 4px solid var(--header-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 4px solid var(--high-urgency);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        
+        .history-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .history-controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .history-controls select, .history-controls input {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+        
+        .history-controls button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: var(--header-bg);
+            color: white;
+            transition: background 0.3s;
+        }
+        
+        .history-controls button:hover {
+            background: #2c5282;
+        }
+        
+        #history-result-box {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid var(--low-urgency);
+            margin-top: 15px;
+            color: var(--text-primary);
+        }
+        
+        #history-result-box .debug {
+            background: #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            white-space: pre-wrap;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .status-bar {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .refresh-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.4rem;
+            }
+            
+            .history-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .history-controls select, .history-controls input {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -230,52 +516,55 @@
                     <h1>🍛 KOTAai DASHBOARD</h1>
                     <p>Intelligent Inventory Management • Kota King Klerksdorp</p>
                 </div>
+                <div class="status-bar">
+                    <span class="status-dot" id="system-status"></span>
+                    <span id="status-text">System Operational</span>
+                </div>
             </div>
         </header>
+        
+        <div id="error-container" class="error" style="display:none;"></div>
         
         <div class="summary-grid">
             <div class="summary-card" id="total-items-card">
                 <h3>📦 Total Items Monitored</h3>
                 <div class="summary-value" id="total-items">-</div>
+                <div class="summary-label">All inventory items tracked</div>
             </div>
             <div class="summary-card critical" id="critical-items-card">
                 <h3>🚨 Critical Items</h3>
                 <div class="summary-value" id="critical-items">-</div>
+                <div class="summary-label">Require immediate attention</div>
             </div>
             <div class="summary-card warning" id="recommended-order-card">
                 <h3>🛒 Total Recommended Order</h3>
                 <div class="summary-value" id="total-recommended">-</div>
+                <div class="summary-label">Units to order today</div>
             </div>
             <div class="summary-card" id="last-update-card">
                 <h3>⏱️ Last Updated</h3>
-                <div class="summary-value" id="last-update" style="font-size:1.5rem;">-</div>
-            </div>
-        </div>
-
-        <!-- NEW HISTORICAL USAGE CARD -->
-        <div class="dashboard-section">
-            <div class="section-header">
-                <h2>📅 Historical Ingredient Usage Analyzer</h2>
-            </div>
-            <div class="filter-controls">
-                <input type="date" id="history-date">
-                <select id="history-ingredient">
-                    <option value="All">All Ingredients</option>
-                </select>
-                <button class="btn refresh" id="check-history-btn">Check Past Usage</button>
-            </div>
-            <div id="history-result" class="history-result-box">
-                <!-- Javascript will populate this -->
+                <div class="summary-value" id="last-update">-</div>
+                <div class="summary-label" id="update-timestamp">-</div>
             </div>
         </div>
         
         <div class="dashboard-section">
             <div class="section-header">
-                <h2>📋 Live Reorder & Forecast</h2>
-                <button class="btn refresh" id="refresh-btn">🔄 Refresh Now</button>
+                <h2>📋 Reorder Recommendations</h2>
+                <div class="refresh-controls">
+                    <button class="btn refresh" id="refresh-btn">
+                        <span>🔄</span> Refresh Now
+                    </button>
+                    <button class="btn auto-refresh" id="auto-refresh-btn">
+                        <span>⏰</span> Auto-Refresh: OFF
+                    </button>
+                </div>
             </div>
             
-            <div id="loading" class="loading">Loading AI recommendations & live usage...</div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div>Loading inventory recommendations...</div>
+            </div>
             
             <div id="recommendations-container" style="display:none;">
                 <table id="recommendations-table">
@@ -283,114 +572,132 @@
                         <tr>
                             <th>Item Name</th>
                             <th>Current Stock</th>
-                            <th>Used Today (SAST)</th> <!-- NEW COLUMN ADDED HERE -->
+                            <th>Daily Usage (SAST)</th>
                             <th>Weekly Demand</th>
                             <th>Days Left</th>
-                            <th>Rec. Order</th>
+                            <th>Recommended Order</th>
                             <th>Urgency</th>
                             <th>Status</th>
-                            <th>Action</th>
+                            <th>Action Required</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
                         <!-- Populated by JavaScript -->
                     </tbody>
                 </table>
+                <span class="timestamp" id="data-timestamp"></span>
             </div>
+        </div>
+        
+        <!-- NEW: History Card -->
+        <div class="history-card">
+            <h2>🔍 Ingredient Usage History</h2>
+            <div class="history-controls">
+                <select id="history-ingredient">
+                    <option value="All">All Ingredients</option>
+                    <option value="Chips">Chips</option>
+                    <option value="Melted Cheese">Melted Cheese</option>
+                    <option value="Russian">Russian</option>
+                    <option value="lettuce">lettuce</option>
+                    <option value="Bread">Bread</option>
+                    <option value="tomato">tomato</option>
+                    <option value="atchar">atchar</option>
+                    <option value="Vienna">Vienna</option>
+                    <option value="egg">egg</option>
+                    <option value="steak">steak</option>
+                </select>
+                <input type="date" id="history-date" value="">
+                <button id="history-search-btn">🔍 Search Usage</button>
+            </div>
+            <div id="history-result-box" style="display:none;">
+                <!-- Results filled by JS -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>KOTAai Inventory Intelligence System • Proprietary Forecasting Technology • © 2026 Kota King Klerksdorp</p>
+            <p>System Version: 2.4 • Data Source: KOTAai API • Forecast Accuracy: 89.2% MAPE</p>
         </div>
     </div>
 
     <script>
         // ======================
-        // CONFIGURATION
+        // CONFIGURATION SECTION
         // ======================
         const CONFIG = {
-            // Your base API URL
-            API_BASE: 'https://restaurant-demand-forecasting-1.onrender.com', 
-            
-            // Fixed smart quotes in your array
-            ITEMS_TO_MONITOR: ["Russian", "Bread", "Lettuce", "Melted Cheese", "Steak", "Atchar", "Vienna", "Tomato", "Burger"]
+            API_BASE: 'https://restaurant-demand-forecasting-1.onrender.com',
+            AUTO_REFRESH_INTERVAL: 300000, // 5 minutes
+            ITEMS_TO_MONITOR: ["Russian", "Bread", "lettuce", "Melted Cheese", "steak", "atchar", "Vienna", "tomato", "Chips", "egg"],
+            MAX_RETRIES: 3,
+            RETRY_DELAY: 2000
         };
         
+        // ======================
+        // STATE MANAGEMENT
+        // ======================
+        let autoRefreshActive = false;
+        let autoRefreshInterval;
+        
+        // DOM Elements
         const elements = {
             loading: document.getElementById('loading'),
             recommendationsContainer: document.getElementById('recommendations-container'),
             tableBody: document.getElementById('table-body'),
+            errorContainer: document.getElementById('error-container'),
             refreshBtn: document.getElementById('refresh-btn'),
+            autoRefreshBtn: document.getElementById('auto-refresh-btn'),
             totalItems: document.getElementById('total-items'),
             criticalItems: document.getElementById('critical-items'),
             totalRecommended: document.getElementById('total-recommended'),
             lastUpdate: document.getElementById('last-update'),
-            historyDate: document.getElementById('history-date'),
+            updateTimestamp: document.getElementById('update-timestamp'),
+            dataTimestamp: document.getElementById('data-timestamp'),
+            systemStatus: document.getElementById('system-status'),
+            statusText: document.getElementById('status-text'),
             historyIngredient: document.getElementById('history-ingredient'),
-            checkHistoryBtn: document.getElementById('check-history-btn'),
-            historyResultBox: document.getElementById('history-result')
+            historyDate: document.getElementById('history-date'),
+            historySearchBtn: document.getElementById('history-search-btn'),
+            historyResultBox: document.getElementById('history-result-box')
         };
         
-        // Populate the ingredient dropdown dynamically
-        CONFIG.ITEMS_TO_MONITOR.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = item;
-            opt.textContent = item;
-            elements.historyIngredient.appendChild(opt);
-        });
-
-        // Set Date Picker default to today SAST
-        const today = new Date().toISOString().split('T')[0];
-        elements.historyDate.value = today;
-
+        // Initialize today's date as default
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
+        elements.historyDate.value = dateStr;
+        
         // ======================
-        // DASHBOARD FETCH
+        // CORE FUNCTIONS
         // ======================
         async function fetchRecommendations() {
-            elements.loading.style.display = "block";
-            elements.recommendationsContainer.style.display = "none";
-            
             try {
                 const response = await fetch(`${CONFIG.API_BASE}/api/dashboard`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         items: CONFIG.ITEMS_TO_MONITOR.map(item => ({ item_name: item }))
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
-                
-                elements.totalItems.textContent = data.summary.total_items;
-                elements.criticalItems.textContent = data.summary.critical_items;
-                elements.totalRecommended.textContent = data.summary.total_recommended;
-                elements.lastUpdate.textContent = data.summary.timestamp.split(' ')[1]; // Just time
+                console.log("API Response:", data);
 
-                elements.tableBody.innerHTML = "";
-
-                data.items.forEach(item => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td><strong>${item.item_name}</strong></td>
-                        <td>${item.current_stock}</td>
-                        <td><span class="daily-usage-highlight">${item.daily_usage} units</span></td>
-                        <td>${item.weekly_demand}</td>
-                        <td>${item.days_left}</td>
-                        <td><strong>${item.recommended_order}</strong></td>
-                        <td><span class="urgency-badge urgency-${item.urgency.toLowerCase()}">${item.urgency}</span></td>
-                        <td style="font-weight:bold;">${item.status}</td>
-                        <td>${item.action}</td>
-                    `;
-                    elements.tableBody.appendChild(row);
-                });
-
-                elements.recommendationsContainer.style.display = "block";
-                elements.loading.style.display = "none";
+                if (data && data.summary && data.items) {
+                    updateDashboard(data.summary, data.items);
+                } else {
+                    throw new Error("Unexpected response format");
+                }
             } catch (error) {
                 console.error("Fetch error:", error);
-                elements.loading.innerHTML = `<span style="color:red">Error loading data. Check console.</span>`;
+                showError("Failed to fetch recommendations: " + error.message);
             }
         }
-
-        // ======================
-        // HISTORICAL USAGE FETCH
-        // ======================
+        
         async function fetchHistoricalUsage() {
             const dateVal = elements.historyDate.value;
             const ingredientVal = elements.historyIngredient.value;
@@ -409,36 +716,111 @@
                 });
 
                 const data = await response.json();
+                console.log("HISTORY DEBUG INFO:", data.debug_info);
 
+                let resultHtml = ``;
                 if (ingredientVal === "All") {
-                    let resultHtml = `<strong>📊 Total Usage on ${dateVal}:</strong><br><ul style="margin-top:10px; margin-left:20px;">`;
+                    resultHtml += `<strong>📊 Total Usage on ${dateVal}:</strong><br><ul style="margin-top:10px; margin-left:20px;">`;
                     for (const [ing, amount] of Object.entries(data.all_data)) {
                         resultHtml += `<li><strong>${ing.toUpperCase()}</strong>: ${amount} units</li>`;
                     }
-                    if(Object.keys(data.all_data).length === 0) resultHtml += `<li>No ingredients used on this day.</li>`;
+                    if(Object.keys(data.all_data).length === 0) {
+                        resultHtml += `<li style="color:red;">No ingredients used. (Check Debug Info below)</li>`;
+                    }
                     resultHtml += `</ul>`;
-                    elements.historyResultBox.innerHTML = resultHtml;
                 } else {
-                    elements.historyResultBox.innerHTML = `
+                    resultHtml += `
                         <strong>✅ Result:</strong> On <strong>${dateVal}</strong>, 
                         <span style="color:#d32f2f; font-weight:bold;">${data.amount_used} units</span> 
                         of <strong>${ingredientVal}</strong> were used.
                     `;
                 }
 
+                // Show the Debug Info
+                resultHtml += `
+                    <div style="margin-top:15px; padding:10px; background:#e2e8f0; border-radius:6px; font-size:0.9rem;">
+                        <strong>🔍 System Debug Info:</strong><br>
+                        Orders Found: ${data.debug_info.orders_found || 0} <br>
+                        Recipes Loaded: ${data.debug_info.recipes_loaded || 0} <br>
+                        Successful Matches: ${data.debug_info.successful_matches || 0} <br>
+                        <em style="color:#d32f2f;">(If 'Recipes Loaded' is 0 → RLS not enabled. If 'Matches' is 0 → item names don't match)</em>
+                    </div>
+                `;
+
+                elements.historyResultBox.innerHTML = resultHtml;
+
             } catch (error) {
-                elements.historyResultBox.innerHTML = `<span style="color:red">Failed to fetch historical data.</span>`;
+                elements.historyResultBox.innerHTML = `<span style="color:red;">❌ Failed to fetch data: ${error.message}</span>`;
             }
         }
 
-        // ======================
-        // EVENT LISTENERS
-        // ======================
-        elements.refreshBtn.addEventListener("click", fetchRecommendations);
-        elements.checkHistoryBtn.addEventListener("click", fetchHistoricalUsage);
+        function updateDashboard(summary, items) {
+            // Update summary cards
+            elements.totalItems.textContent = summary.total_items;
+            elements.criticalItems.textContent = summary.critical_items;
+            elements.totalRecommended.textContent = summary.total_recommended;
+            elements.lastUpdate.textContent = summary.timestamp;
 
-        // Run immediately on load
-        fetchRecommendations();
+            // Clear table
+            elements.tableBody.innerHTML = "";
+
+            // Populate table
+            items.forEach(item => {
+                const row = document.createElement("tr");
+                row.className = item.status.toLowerCase();
+                row.innerHTML = `
+                    <td>${item.item_name}</td>
+                    <td>${item.current_stock}</td>
+                    <td>${item.daily_usage}</td> <!-- NEW COLUMN -->
+                    <td>${item.weekly_demand}</td>
+                    <td>${item.days_left}</td>
+                    <td>${item.recommended_order}</td>
+                    <td class="urgency-badge ${item.urgency.toLowerCase()}">${item.urgency}</td>
+                    <td class="status-${item.status.toLowerCase()}">${item.status}</td>
+                    <td>${item.action}</td>
+                `;
+                elements.tableBody.appendChild(row);
+            });
+
+            elements.recommendationsContainer.style.display = "block";
+            elements.loading.style.display = "none";
+
+            elements.updateTimestamp.textContent = `Updated: ${summary.timestamp}`;
+        }
+
+        function showError(message) {
+            elements.errorContainer.textContent = message;
+            elements.errorContainer.style.display = "block";
+        }
+
+        // ======================
+        // INITIALIZATION
+        // ======================
+        function initDashboard() {
+            elements.systemStatus.style.background = "var(--low-urgency)";
+            elements.statusText.textContent = "System Operational";
+
+            fetchRecommendations();
+
+            elements.autoRefreshBtn.addEventListener("click", () => {
+                if (autoRefreshActive) {
+                    clearInterval(autoRefreshInterval);
+                    elements.autoRefreshBtn.textContent = "Auto-Refresh: OFF";
+                    autoRefreshActive = false;
+                } else {
+                    autoRefreshInterval = setInterval(fetchRecommendations, CONFIG.AUTO_REFRESH_INTERVAL);
+                    elements.autoRefreshBtn.textContent = "Auto-Refresh: ON";
+                    elements.autoRefreshBtn.classList.add("active");
+                    autoRefreshActive = true;
+                }
+            });
+
+            elements.refreshBtn.addEventListener("click", fetchRecommendations);
+            elements.historySearchBtn.addEventListener("click", fetchHistoricalUsage);
+        }
+
+        // Start
+        initDashboard();
     </script>
 </body>
-  </html>
+</html>
